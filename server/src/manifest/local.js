@@ -53,7 +53,7 @@ module.exports = {
             
         },
         openai: {
-            key: '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'
+            key: ''
         },
         
     }
