@@ -1,21 +1,30 @@
-module.exports = {
-    extends: 'local',
-    data: {
-        type: 'production',
-        port: 3100,
-        urlRoot: 'https://getrich.ds3783.com',
-        feRoot: "/static/fe",
-        defaultDatabase: 'HAPI',
-        databases: {
-            VOC_MASTER: {
-                host: '127.0.0.1',
-                port: 51002,
-                user: 'terence',
-                password: 'my_password',
-                database: 'voc_master',
-                charset: 'utf8mb4',
-            },
-        },
-        
-    }
-};
+const fs = require('fs')
+const path = require('path')
+const crypto = require('crypto')
+const os = require('os');
+
+
+// Get the home directory
+const homeDirectory = os.homedir();
+const keyPath = '~/keys/filelocker.key';
+
+
+// Load the public key from a file or use the generated private key
+let key = fs.readFileSync(path.resolve(keyPath.replace(/~/, homeDirectory)));
+// key=Buffer.from(key,'hex');
+
+// Load the encrypted data from the file
+const encryptedData = fs.readFileSync('prod.encrypted', 'binary');
+
+// Create a decipher object
+const decipher = crypto.createDecipheriv('aes-256-cbc', key, Buffer.alloc(16, 0));
+
+// Use the private key for decryption
+// Update and finalize the decipher
+let decryptedData = decipher.update(encryptedData, 'binary', 'utf8');
+decryptedData += decipher.final('utf8');
+
+// Display the decrypted data
+fs.writeFileSync('prod.decrypted.js', decryptedData);
+const manifest = require("./prod.decrypted.js");
+module.exports = manifest;

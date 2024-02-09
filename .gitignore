@@ -1,0 +1,10 @@
+/.idea/
+
+
+#ignore server plain manifest
+**/*.plain.js
+
+#ignore node_modules
+**/node_modules
+
+server/logs/
