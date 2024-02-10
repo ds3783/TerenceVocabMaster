@@ -2,7 +2,8 @@
 
 
 #ignore server plain manifest
-**/*.plain.js
+/server/src/manifes/*.plain.js
+/server/src/manifes/*.decrypted.js
 
 #ignore node_modules
 **/node_modules
