@@ -13,7 +13,7 @@ import IP from "ip";
 
 import NestiaWeb from "nestia-web";
 import helper from "../helpers/index.mjs";
-import {loginFilter, permissionFilter} from "../lib/misc/permissionFilter.mjs";
+// import {loginFilter, permissionFilter} from "../lib/misc/permissionFilter.mjs";
 import CronJobs from "../lib/service/cronjobs/index.mjs";
 import Crawler from "../lib/service/crawler/index.mjs";
 import {requireFilesInPath} from "../lib/misc/utils.mjs";
@@ -144,7 +144,7 @@ export default async function () {
     NestiaWeb.init(middlewareConfig);
 
 
-    app.use(loginFilter, permissionFilter);
+    // app.use(loginFilter, permissionFilter);
 
     //Routes
     (function () {

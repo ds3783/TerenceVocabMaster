@@ -27,7 +27,12 @@ export async function requireFilesInPath(dir, fileFilter, callback) {
         } else if (fState.isFile() && fileFilter(file, dir)) {
             let module;
             if (/\.mjs$/.test(file)) {
-                module = await import(path.join(dir, file));
+                try {
+                    module = await import(path.join(dir, file));
+                } catch (e) {
+                    console.error('Error parsing module file:' + file, e);
+                    continue;
+                }
                 module = module.default;
             } else {
                 module = require(path.join(dir, file));

@@ -6,7 +6,6 @@ import {
     getVerify,
     registerNewUser,
     resetPassword,
-    sendEmailWithToken,
     sendPasswordResetMail,
     validateCode,
     validateCodeAndToken,

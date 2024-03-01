@@ -11,7 +11,7 @@ page {
 page .head {
     height: 180rpx;
     text-align: left;
-    padding-top: 100rpx;
+    padding-top: 20rpx;
     padding-left: 140rpx;
 }
 
@@ -57,4 +57,24 @@ page .head image {
     font-size:80rpx;
     line-height: 120px;
     font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.user-login{
+    margin-top: 40rpx;
+   display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 20rpx;
+    align-items: center;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+    color: #754926;
+    font-weight: 500;
+}
+
+.user-login image{
+    width: 120rpx;
+    height: 120rpx;
+    margin-right: 40rpx;
+    border-radius: 60rpx;
+    box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.5);
 }

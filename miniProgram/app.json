@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/home",
     "pages/index/login",
-    "pages/logs/logs"
+    "pages/logs/logs",
+    "pages/settings/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",

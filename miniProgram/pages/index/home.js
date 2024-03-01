@@ -31,7 +31,11 @@ Page({
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady() {
-
+        wx.getSetting({
+            success(res) {
+                console.log(11,res.authSetting)
+            }
+        })
     },
 
     /**
@@ -52,7 +56,7 @@ Page({
      * 生命周期函数--监听页面卸载
      */
     onUnload() {
-
+        
     },
 
     /**
@@ -76,8 +80,35 @@ Page({
 
     },
 
+    onAuthorizeClick() {
+        // scope.userInfo
+        wx.getUserProfile({
+            withCredentials:true,
+            lang:'zh_CN', // 'en' 'zh_CN' 'zh_TW'
+            desc:'需要获得您的头像和昵称信息',
+
+            success: function (userRes) {
+                var userInfo = userRes.userInfo;
+                var avatarUrl = userInfo.avatarUrl; // 用户头像
+                var nickName = userInfo.nickName; // 用户昵称
+                console.log('用户信息', userRes)
+                // 可以将 code 和用户信息发送到服务器进行进一步处理
+                // 服务器可以通过 code 获取 openid、unionid、session key
+            },
+            fail: function (err) {
+                // 用户拒绝授权，可以引导用户打开设置页面开启授权
+                console.log('getUserProfile fail', err);
+            }
+        });
+    },
+
+    onGetUserProfile(e) {
+        console.log(222,e);
+    },
+
     goModule(e) {
         const {url} = e.currentTarget.dataset
+        console.log(url);
         wx.navigateTo({
             url,
         })

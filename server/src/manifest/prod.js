@@ -14,7 +14,7 @@ let key = fs.readFileSync(path.resolve(keyPath.replace(/~/, homeDirectory)));
 // key=Buffer.from(key,'hex');
 
 // Load the encrypted data from the file
-const encryptedData = fs.readFileSync('prod.encrypted', 'binary');
+const encryptedData = fs.readFileSync(path.join(__dirname, 'prod.encrypted'), 'binary');
 
 // Create a decipher object
 const decipher = crypto.createDecipheriv('aes-256-cbc', key, Buffer.alloc(16, 0));
@@ -25,6 +25,7 @@ let decryptedData = decipher.update(encryptedData, 'binary', 'utf8');
 decryptedData += decipher.final('utf8');
 
 // Display the decrypted data
-fs.writeFileSync('prod.decrypted.js', decryptedData);
-const manifest = require("./prod.decrypted.js");
+const decryptedFilePath = path.join(__dirname,'prod.decrypted');
+fs.writeFileSync(decryptedFilePath, decryptedData);
+const manifest = require(decryptedFilePath);
 module.exports = manifest;

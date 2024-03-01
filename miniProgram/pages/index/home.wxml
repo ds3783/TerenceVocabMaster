@@ -1,11 +1,16 @@
 <!--pages/index/home.wxml-->
 <scroll-view class="home" scroll-y type="list">
+    <!--用户登录-->
+    <view class="user-login" >
+        <span>微信用户</span>
+        <image mode="heightFix" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/default_avatar.jpg"/>
+    </view>
     <!--功能模块列表-->
     <view class="head">
         <image mode="heightFix"  src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
     </view>
     <view class="module-list">
-        <view class="module-item" wx:for="{{moduleList}}" wx:key="this" bindtap="goModule">
+        <view class="module-item" wx:for="{{moduleList}}" data-url="/pages/settings/index" wx:key="this" bindtap="goModule">
             <text class="module-name">{{item.name}}</text>
         </view>
     </view>

@@ -22,7 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
-    "nestia-web": "^2.1.21",
+    "nestia-web": "^2.1.22",
     "node-cron": "^2.0.3",
     "node-html-parser": "^5.4.2",
     "nodemailer": "^6.9.8",
