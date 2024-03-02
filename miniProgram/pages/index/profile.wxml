@@ -4,11 +4,11 @@
     <view class="userinfo">
       <block wx:if="{{canIUseNicknameComp}}">
         <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatar}}"></image>
+          <image mode="aspect-fit" class="avatar" src="{{userInfo.avatar}}"></image>
         </button>
         <view class="nickname-wrapper">
           <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" value="{{userInfo.name}}" bind:change="onInputChange" />
+          <input type="nickname" maxlength="40" class="nickname-input" placeholder="请输入昵称" value="{{userInfo.name}}" bind:change="onInputChange" />
         </view>
         <view class="action-list">
           <view class="action-item" bindtap="save">

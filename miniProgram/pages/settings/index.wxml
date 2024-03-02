@@ -1,26 +1,14 @@
 <!--pages/settings/index.wxml-->
 <scroll-view class="setting" scroll-y type="list">
-    <!--当前用户状态-->
     <view wx:if="isLogin" class="login">
         <view class="head">
-            <image mode="heightFix" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
+            <image mode="aspect-fit" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
         </view>
         <view class="module-list">
             <view class="module-item" wx:for="{{moduleList}}" wx:key="this" bindtap="goModule">
                 <text class="module-name">{{item.name}}</text>
             </view>
         </view>
-    </view>
-<!--未登录状态-->
-    <view wx:else class="not-login">
-        <view class="head">
-            <image mode="heightFix" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
-        </view>
-        <view class="module-list">
-            <view class="module-item" >
-                <text class="module-name">登录</text>
-            </view>
-        </view> 
     </view>
 
 </scroll-view>

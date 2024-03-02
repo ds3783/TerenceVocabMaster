@@ -72,8 +72,8 @@ page .head image {
 }
 
 .user-login image{
-    width: 120rpx;
-    height: 120rpx;
+    width: 120rpx!important;
+    height: 120rpx!important;
     margin-right: 40rpx;
     border-radius: 60rpx;
     box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.5);
