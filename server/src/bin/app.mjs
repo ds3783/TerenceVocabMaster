@@ -15,7 +15,6 @@ import NestiaWeb from "nestia-web";
 import helper from "../helpers/index.mjs";
 // import {loginFilter, permissionFilter} from "../lib/misc/permissionFilter.mjs";
 import CronJobs from "../lib/service/cronjobs/index.mjs";
-import Crawler from "../lib/service/crawler/index.mjs";
 import {requireFilesInPath} from "../lib/misc/utils.mjs";
 import RegisterEvents from "../lib/service/eventRegister.mjs";
 import {default as middlewareConfig} from "./middlewareConfig.mjs";
@@ -136,8 +135,6 @@ export default async function () {
             CronJobs(false);
         }
 
-        //init crawler
-        Crawler.init();
 
         RegisterEvents();
     });
