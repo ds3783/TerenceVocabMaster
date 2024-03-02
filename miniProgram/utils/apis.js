@@ -15,15 +15,20 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/user/login',
     },
+    {
+        name: 'checkLogin',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/user/checkLogin',
+    },
     
 ];
 
 
 let ENV = 'prod';
 
-const version = wx.getAccountInfoSync().miniProgram.envVersion;
-console.log('version:', version);
-if (version === 'develop') {
+const envString = wx.getAccountInfoSync().miniProgram.envVersion;
+console.log('ENV:', envString);
+if (envString === 'develop') {
     ENV = 'local';
 }
 
