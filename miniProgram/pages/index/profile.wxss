@@ -1,0 +1,87 @@
+/**index.wxss**/
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/background2.jpg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.scrollarea {
+    flex: 1;
+    overflow-y: hidden;
+}
+
+
+.avatar-wrapper {
+    padding: 0;
+    margin-top: 40rpx;
+    margin-bottom: 40rpx;
+    justify-self: center;
+    width: 128rpx !important;
+    height: 128rpx !important;
+    background: none;
+}
+
+.avatar {
+    display: block;
+    width: 128rpx;
+    height: 128rpx;
+    border-radius: 64rpx;
+    box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.5);
+}
+
+.nickname-wrapper {
+    display: flex;
+    width: 100%;
+    padding: 16rpx;
+    box-sizing: border-box;
+    border-top: .5rpx solid rgba(0, 0, 0, 0.1);
+    border-bottom: .5rpx solid rgba(0, 0, 0, 0.1);
+    color: #754926;
+    font-size: 48rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+    align-items: center;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 32rpx;
+}
+
+.nickname-label {
+    padding: 16rpx;
+    width: 128rpx;
+}
+
+.nickname-input {
+    flex: 1;
+    padding: 16rpx;
+}
+
+.action-list {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-top: 32rpx;
+}
+
+
+.action-list .action-item{
+    width: 600rpx;
+    height: 120rpx;
+    margin-top: 40rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 120rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/button-wide.png") no-repeat center center;
+    background-size: 100% 100%;
+    box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.2);
+}
+.action-list .action-item .action-name{
+    width: 600rpx;
+    text-align: center;
+    color: #754926;
+    font-size:80rpx;
+    line-height: 120rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}

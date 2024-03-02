@@ -1,0 +1,24 @@
+<!--index.wxml-->
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view class="userinfo">
+      <block wx:if="{{canIUseNicknameComp}}">
+        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+          <image class="avatar" src="{{userInfo.avatar}}"></image>
+        </button>
+        <view class="nickname-wrapper">
+          <text class="nickname-label">昵称</text>
+          <input type="nickname" class="nickname-input" placeholder="请输入昵称" value="{{userInfo.name}}" bind:change="onInputChange" />
+        </view>
+        <view class="action-list">
+          <view class="action-item" bindtap="save">
+            <text class="action-name">保 存</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view> 您的微信版本过低，请升级至最新版本，谢谢！ </view>
+      </block>
+    </view>
+  </view>
+</scroll-view>

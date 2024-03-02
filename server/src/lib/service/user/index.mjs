@@ -7,6 +7,7 @@ const SQLS = {
     GET_USER_BY_OPEN_ID: "SELECT * FROM users WHERE `open_id`=? AND `env`=?",
     INSERT_USER: "INSERT INTO users(id,open_id,env,session_key,name,avatar) VALUES (?,?,?,?,?,?)",
     UPDATE_USER_SESSION_KEY: "UPDATE users SET session_key = ? WHERE open_id = ? AND env = ?",
+    UPDATE_USER_NAME_AVATAR: "UPDATE users SET name = ? , avatar = ? WHERE open_id = ? AND env = ?",
 };
 
 const RANDOM_NAME_PREFIX = ['Red', 'Chuck', 'Bomb', 'Matilda', 'Terence'];
@@ -103,6 +104,22 @@ async function updateUserSessionKey(openId, envString, sessionKey) {
     try {
         conn = await DataBase.borrow(dbName);
         await DataBase.doQuery(conn, SQLS.UPDATE_USER_SESSION_KEY, [sessionKey, openId, envString]);
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+
+export async function updateUser(openId, envString, name, avatar) {
+
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        await DataBase.doQuery(conn, SQLS.UPDATE_USER_NAME_AVATAR, [name, avatar, openId, envString]);
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {

@@ -1,9 +1,9 @@
 <!--pages/index/home.wxml-->
 <scroll-view class="home" scroll-y type="list">
     <!--用户登录-->
-    <view class="user-login" >
-        <span>微信用户</span>
-        <image mode="heightFix" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/default_avatar.jpg"/>
+    <view class="user-login" bindtap="goProfile">
+        <span>{{userInfo.name}}</span>
+        <image mode="heightFix" src="{{userInfo.avatar}}"/>
     </view>
     <!--功能模块列表-->
     <view class="head">

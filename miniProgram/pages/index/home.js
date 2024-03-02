@@ -1,3 +1,5 @@
+const global = require('../../utils/global');
+
 // pages/index/home.js
 Page({
 
@@ -5,6 +7,8 @@ Page({
      * 页面的初始数据
      */
     data: {
+        userInfo: null,
+
         moduleList: [],
     },
 
@@ -12,6 +16,15 @@ Page({
      * 生命周期函数--监听页面加载
      */
     onLoad(options) {
+        const appInstance = getApp();
+
+        this.setData({userInfo: appInstance.globalData.userInfo});
+        console.log('userInfo', appInstance.globalData.userInfo);
+        global.eventEmitter.on('userInfoUpdated', (userInfo) => {
+            console.log('userInfo update', userInfo);
+            this.setData({userInfo});
+        });
+
         let moduleList = this.data.moduleList;
         moduleList.push({
             name: "设置",
@@ -33,7 +46,7 @@ Page({
     onReady() {
         wx.getSetting({
             success(res) {
-                console.log(11,res.authSetting)
+                console.log(11, res.authSetting)
             }
         })
     },
@@ -56,7 +69,7 @@ Page({
      * 生命周期函数--监听页面卸载
      */
     onUnload() {
-        
+
     },
 
     /**
@@ -83,9 +96,9 @@ Page({
     onAuthorizeClick() {
         // scope.userInfo
         wx.getUserProfile({
-            withCredentials:true,
-            lang:'zh_CN', // 'en' 'zh_CN' 'zh_TW'
-            desc:'需要获得您的头像和昵称信息',
+            withCredentials: true,
+            lang: 'zh_CN', // 'en' 'zh_CN' 'zh_TW'
+            desc: '需要获得您的头像和昵称信息',
 
             success: function (userRes) {
                 var userInfo = userRes.userInfo;
@@ -102,8 +115,10 @@ Page({
         });
     },
 
-    onGetUserProfile(e) {
-        console.log(222,e);
+    goProfile(e) {
+        wx.navigateTo({
+            url: '/pages/index/profile',
+        })
     },
 
     goModule(e) {

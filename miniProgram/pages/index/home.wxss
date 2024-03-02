@@ -55,7 +55,7 @@ page .head image {
     text-align: center;
     color: #754926;
     font-size:80rpx;
-    line-height: 120px;
+    line-height: 120rpx;
     font-family: "Handwriting", "Heiti SC", "sans-serif";
 }
 

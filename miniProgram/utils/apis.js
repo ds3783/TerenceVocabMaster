@@ -20,6 +20,16 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/user/checkLogin',
     },
+    {
+        name: 'uploadAvatar',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/user/uploadAvatar',
+    },
+    {
+        name: 'updateProfile',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/user/updateProfile',
+    },
     
 ];
 
