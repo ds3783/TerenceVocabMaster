@@ -4,10 +4,12 @@
 
 #ignore server plain manifest
 /server/src/manifes/*.plain.js
-/server/src/manifes/*.decrypted.js
+/server/src/manifes/*.decrypted
+
+#ignore server cache and logs
+/server/cache
+/server/logs
+/server/healthcheck.html
 
 #ignore node_modules
 **/node_modules
-
-#ignore logs
-server/logs/
