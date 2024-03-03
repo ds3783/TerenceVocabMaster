@@ -135,7 +135,10 @@ export default async function () {
             CronJobs(false);
         }
 
-
+        app.use('*/healthcheck.html', express.static(path.join(__dirname, '../healthcheck.html'), {
+            fallthrough: false
+        }));
+        
         RegisterEvents();
     });
     NestiaWeb.init(middlewareConfig);
