@@ -76,12 +76,12 @@ export default async function () {
         frequency: 'daily',
         verbose: false
     });
-    
+
     middlewareConfig.log.extraZipStreams.push(accessLogStream);
-    middlewareConfig.log.extraZipStreams.push(accessLogStream,errorLogStream);
+    middlewareConfig.log.extraZipStreams.push(accessLogStream, errorLogStream);
 
     let app = express();
-    middlewareConfig.common.expressApp=app;
+    middlewareConfig.common.expressApp = app;
 
     app.set('trust proxy', true);
     app.set('views', path.resolve(path.join(workPath, 'views')));
@@ -130,15 +130,15 @@ export default async function () {
         if (cluster.isPrimary || (cluster.worker && cluster.worker.id) === 1) {
             //init cron jobs
             CronJobs(true);
-            
-        }else{
+
+        } else {
             CronJobs(false);
         }
 
-        app.use('*/healthcheck.html', express.static(path.resolve(path.join('healthcheck.html')), {
+        app.use('*/healthcheck.html', express.static(path.resolve(path.join(workPath, 'healthcheck.html')), {
             fallthrough: false
         }));
-        
+
         RegisterEvents();
     });
     NestiaWeb.init(middlewareConfig);
