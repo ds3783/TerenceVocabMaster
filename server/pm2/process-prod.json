@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "name": "GetRich",
+            "name": "TerenceVocabMaster",
             "script": "./src/bin/cluster.mjs",
             "watch": false,
             "instances": 1,
