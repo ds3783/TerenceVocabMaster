@@ -38,6 +38,13 @@ App({
                     },
                     method: 'POST',
                     success: res => {
+                        if (!res.data.result) {
+                            console.log('Invalid user info',res);
+                            console.log('Clear user info');
+                            cachedUser = null;
+                            wx.removeStorageSync('user');
+                            return;
+                        }
                         console.log('login success:', res);
                         this.globalData.userInfo = cachedUser;
                         global.eventEmitter.emit('userInfoUpdated', cachedUser);

@@ -1,5 +1,10 @@
 const global = require('../../utils/global');
 
+const PREFETCH_RESOURCES = [
+    'https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/default_background.jpg',
+    'https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/plate.png',
+    ];
+
 // pages/index/home.js
 Page({
 
@@ -37,7 +42,18 @@ Page({
             source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Handwriting.ttf")',
             global: true,
             success: console.log
-        })
+        });
+        //START: prefetch resources
+        for (let url of PREFETCH_RESOURCES) {
+            wx.downloadFile({
+                url,
+                success: function (res) {
+                    if (res.statusCode === 200) {
+                        console.log('prefetch success', res.tempFilePath);
+                    }
+                }
+            });
+        }
     },
 
     /**
@@ -122,6 +138,17 @@ Page({
     },
 
     goModule(e) {
+        console.log('goModule', this.data.userInfo);
+        if (!this.data.userInfo){
+            console.log('Please wait for user info loaded.');
+            wx.showToast({
+                title: '请稍等用户信息加载完成',
+                icon: 'fail', 
+                duration: 2000, 
+                mask: true 
+            });
+            return;
+        }
         const {url} = e.currentTarget.dataset
         console.log(url);
         wx.navigateTo({

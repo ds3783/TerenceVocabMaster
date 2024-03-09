@@ -1,6 +1,6 @@
 import express from 'express';
 import NestiaWeb from "nestia-web";
-import {checkUserLogin, getUser, userLogin,updateUser} from "../../../../lib/service/user/index.mjs";
+import {checkUserLogin, getUser, userLogin, updateUser} from "../../../../lib/service/user/index.mjs";
 import path from "path";
 import fs from "fs";
 import {v4 as uuid} from "uuid";
@@ -55,11 +55,11 @@ router.post('/checkLogin', async function (req, res, ignoredNext) {
     }
     try {
         let checked = await checkUserLogin(openId, envString, token);
-        if (!checked) {
+        if (!checked.result) {
             res.status(401).send('Invalid user or token expired');
             return;
         }
-        res.send({result: true});
+        res.send(checked);
     } catch (e) {
         NestiaWeb.logger.error('Error fetch authorization', e);
     }
@@ -121,11 +121,10 @@ router.post('/uploadAvatar', async function (req, res) {
 });
 
 
-
 router.post('/updateProfile', async function (req, res) {
     let openId = req.body.open_id;
     let token = req.body.token;
-    let envString = req.body.env; 
+    let envString = req.body.env;
     let name = req.body.name;
     let avatar = req.body.avatar;
     if (!openId || !token || !envString) {
@@ -141,7 +140,7 @@ router.post('/updateProfile', async function (req, res) {
         res.status(401).send('Invalid user or token expired');
         return;
     }
-    NestiaWeb.logger.info('aaaaaa',openId, envString, name, avatar);
+    NestiaWeb.logger.info('aaaaaa', openId, envString, name, avatar);
     await updateUser(openId, envString, name, avatar);
     res.send({result: true});
 });

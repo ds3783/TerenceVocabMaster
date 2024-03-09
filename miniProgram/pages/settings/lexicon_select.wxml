@@ -1,0 +1,26 @@
+<!--pages/settings/index.wxml-->
+<view class="setting">
+    <view class="lexicon_list">
+        <scroll-view class="list_container" enhanced="true" show-scrollbar="false" scroll-x="false" type="list"
+                     scroll-y="true">
+            <checkbox-group class="checkbox-group" bind:change="onLexiconSelect">
+                <label wx:for="{{lexiconList}}" wx:key="this" wx:for-item="lexicon" class="checkbox-label" >
+                    <checkbox value="{{lexicon.code}}" checked="{{lexicon.selected}}"></checkbox>
+                    {{lexicon.name}}
+                </label>
+            </checkbox-group>
+        </scroll-view>
+        
+    </view>
+    <view class="select_all">
+        <checkbox-group class="checkbox-group" bind:change="onSelectAll">
+        <label class="checkbox-label">
+            <checkbox value="{{true}}" checked="{{selectedAll}}"></checkbox>
+            全选
+        </label>
+        </checkbox-group>
+    </view>
+    <view class="module-item" bindtap="onSave">
+        <text class="module-name">保存</text>
+    </view>
+</view>

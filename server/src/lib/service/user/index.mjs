@@ -46,9 +46,12 @@ export async function userLogin(openId, envString, sessionKey) {
 export async function checkUserLogin(openId, envString, token) {
     let user = await getUser(openId, envString);
     if (!user) {
-        return false;
+        return {result: false};
     }
-    return user.token === token;
+    return {
+        result: user.token === token,
+        user: user.token === token ? user : null
+    };
 }
 
 export async function getUser(openId, envString) {

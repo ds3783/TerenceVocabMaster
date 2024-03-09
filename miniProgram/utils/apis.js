@@ -30,6 +30,16 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/user/updateProfile',
     },
+    {
+        name: 'getUserLexiconList',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/lexicon/getUserLexiconList',
+    },
+    {
+        name: 'setUserLexiconList',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/lexicon/setUserLexiconList',
+    },
     
 ];
 

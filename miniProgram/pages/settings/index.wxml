@@ -1,14 +1,11 @@
 <!--pages/settings/index.wxml-->
 <scroll-view class="setting" scroll-y type="list">
-    <view wx:if="isLogin" class="login">
-        <view class="head">
-            <image mode="aspect-fit" src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
+    <view class="module-list">
+        <view class="module-item"  bindtap="onSelectCategory">
+            <text class="module-name">词库设置</text>
         </view>
-        <view class="module-list">
-            <view class="module-item" wx:for="{{moduleList}}" wx:key="this" bindtap="goModule">
-                <text class="module-name">{{item.name}}</text>
-            </view>
+        <view class="module-item"  bindtap="onClearData">
+            <text class="module-name">清除数据</text>
         </view>
     </view>
-
 </scroll-view>

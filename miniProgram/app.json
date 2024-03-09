@@ -3,7 +3,8 @@
     "pages/index/home",
     "pages/index/profile",
     "pages/logs/logs",
-    "pages/settings/index"
+    "pages/settings/index",
+    "pages/settings/lexicon_select"
   ],
   "window": {
     "navigationBarTextStyle": "black",

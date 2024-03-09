@@ -1,4 +1,4 @@
-/* pages/settings/index.wxss */
+/* pages/settings/lexicon_select.wxss */
 
 
 page {
@@ -10,18 +10,44 @@ page {
 
 }
 
-.module-list{
-    padding-top:240rpx;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.lexicon_list {
+    margin: 10vh 32rpx 0;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/plate.png") no-repeat;
+    background-size: 100% 100%;
+    width: 526rpx;
+    height: 40vh;
+    padding: 80rpx;
+    position:relative;
+}
+.list_container{
+    height: 100%;
 }
 
-.module-list .module-item{
+.checkbox-group{
+
+    color: #3B2D1A;
+    font-size:64rpx;
+    line-height: 72rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.checkbox-group{
+    display: flex;
+    flex-direction: column;
+    gap: 40rpx;
+}
+
+.select_all{
+    margin:32rpx 0 0 108rpx;
+    color: #3B2D1A;
+    font-size:64rpx;
+    line-height: 72rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+.module-item{
     width: 600rpx;
     height: 120rpx;
-    margin-top: 40rpx;
+    margin: 40rpx auto;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -32,17 +58,7 @@ page {
     box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.2);
 }
 
-.module-list .module-item:first-of-type{
-    margin-top: 0;
-}
-
-.module-list .module-item .module-icon{
-    width: 80rpx;
-    height: 80rpx;
-    margin-left: 40rpx;
-    margin-right: 40rpx;
-}
-.module-list .module-item .module-name{
+.module-item .module-name{
     width: 600rpx;
     text-align: center;
     color: #754926;
