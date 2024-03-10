@@ -22,7 +22,7 @@ async function getCache(category, key) {
         conn = await DataBase.borrow(dbName);
         let result = await DataBase.doQuery(conn, SQLS.GET_CACHE, [category, key, now - CACHE_TTL]);
         if (result.length) {
-            return result[0];
+            return result[0]['content'];
         } else {
             return null;
         }
@@ -92,8 +92,8 @@ export async function request(prompt, options) {
     threshold++;
     options = options || {};
     let key = NestiaWeb.manifest.get('claude.key');
-    let proxy = NestiaWeb.manifest.get('claude.proxy',true);
-    let reqOptions={
+    let proxy = NestiaWeb.manifest.get('claude.proxy', true);
+    let reqOptions = {
         server: 'claude',
         path: '/v1/messages',
         method: 'POST',
@@ -112,7 +112,7 @@ export async function request(prompt, options) {
             }]
         },
     };
-    if(proxy){
+    if (proxy) {
         reqOptions.proxy = proxy;
     }
     let result = await NestiaWeb.ajax.request(reqOptions);

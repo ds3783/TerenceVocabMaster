@@ -1,6 +1,6 @@
 // pages/settings/lexicon_select.js
 const API = require("../../utils/apis");
-const global = require("../../utils/global");
+// const global = require("../../utils/global");
 Page({
 
     /**
@@ -19,7 +19,7 @@ Page({
 
         let userInfo = appInstance.globalData.userInfo;
         const envString = wx.getAccountInfoSync().miniProgram.envVersion;
-
+        console.log('userInfo',userInfo,appInstance)
         wx.request({
             url: API('getUserLexiconList'),
             data: {
