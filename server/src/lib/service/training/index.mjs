@@ -83,7 +83,7 @@ async function fullfillTopics(userId) {
                 let options = res.match(/^Answers:\nA. (.*)\nB. (.*)\nC. (.*)\nD. (.*)\n+Correct: ([ABCD])(\. .*)?$/);
                 let selections = [options[1], options[2], options[3], options[4]];
                 selections = selections.map((item) => {
-                    return item.replace(/\(.*\)/g, '').trim();
+                    return item.replace(/\(.*\)/g, '').replace(/\s-.*$/,'').trim();
                 });
                 let correct = {A: 0, B: 1, C: 2, D: 3}[options[5]];
                 let correctChoice = selections[correct];
