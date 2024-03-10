@@ -92,7 +92,8 @@ export async function request(prompt, options) {
     threshold++;
     options = options || {};
     let key = NestiaWeb.manifest.get('claude.key');
-    let result = await NestiaWeb.ajax.request({
+    let proxy = NestiaWeb.manifest.get('claude.proxy',true);
+    let reqOptions={
         server: 'claude',
         path: '/v1/messages',
         method: 'POST',
@@ -110,7 +111,11 @@ export async function request(prompt, options) {
                 "content": prompt
             }]
         },
-    });
+    };
+    if(proxy){
+        reqOptions.proxy = proxy;
+    }
+    let result = await NestiaWeb.ajax.request(reqOptions);
     if (result.data?.content && result.data?.content.length) {
         result = result.data?.content[0]?.text;
     }
