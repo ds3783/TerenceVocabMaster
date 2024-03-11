@@ -45,12 +45,10 @@ Page({
         });
         //START: prefetch resources
         for (let url of PREFETCH_RESOURCES) {
-            wx.downloadFile({
-                url,
+            wx.getImageInfo({
+                src:url,
                 success: function (res) {
-                    if (res.statusCode === 200) {
-                        console.log('prefetch success', res.tempFilePath);
-                    }
+                    console.log('prefetch success', res);
                 }
             });
         }
@@ -60,11 +58,11 @@ Page({
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady() {
-        wx.getSetting({
+       /* wx.getSetting({
             success(res) {
                 console.log(11, res.authSetting)
             }
-        })
+        })*/
     },
 
     /**
@@ -132,6 +130,16 @@ Page({
     },
 
     goProfile(e) {
+        if (!this.data.userInfo){
+            console.log('Please wait for user info loaded.');
+            wx.showToast({
+                title: '请稍等用户信息加载完成',
+                icon: 'fail',
+                duration: 2000,
+                mask: true
+            });
+            return;
+        }
         wx.navigateTo({
             url: '/pages/index/profile',
         })

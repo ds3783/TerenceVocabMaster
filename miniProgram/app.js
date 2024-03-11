@@ -14,6 +14,26 @@ App({
     onLaunch() {
         this.globalData.userInfo = null;
 
+        function onNetworkFailure(){
+            wx.showModal({
+                title: '网络错误',
+                content: '无法访问服务器，请稍后再试',
+                showCancel: false, // 不显示取消按钮
+                confirmText: '确定', // 确定按钮的文字，默认为"确定"
+                success: function (res) {
+                    if (res.confirm) {
+                        wx.exitMiniProgram({
+                            success: function() {
+                                console.log('小程序已退出');
+                            },
+                            fail: function(err) {
+                                console.error('退出小程序失败', err);
+                            }
+                        });
+                    }
+                }
+            });
+        }
 
         // 展示本地存储能力
         let cachedUser = wx.getStorageSync('user') || [];
@@ -38,6 +58,10 @@ App({
                     },
                     method: 'POST',
                     success: res => {
+                        if (res.statusCode !== 200) {
+                            onNetworkFailure();
+                            return;
+                        }
                         if (!res.data.result) {
                             console.log('Invalid user info',res);
                             console.log('Clear user info');
@@ -74,13 +98,25 @@ App({
                             },
                             method: 'POST',
                             success: res => {
+                                if (res.statusCode !== 200) {
+                                    onNetworkFailure();
+                                    return;
+                                }
                                 console.log('login success:', res);
                                 global.eventEmitter.emit('userInfoUpdated', res.data);
+                            },
+                            fail: res => {
+                                console.log('login fail:', res);
+                                onNetworkFailure();
                             }
                         });
                     } else {
                         console.log('获取用户登录凭证失败！', res.errMsg);
                     }
+                },
+                fail: res => {
+                    console.log('login fail:', res);
+                    onNetworkFailure();
                 }
             });
 
