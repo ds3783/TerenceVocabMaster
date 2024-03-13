@@ -10,7 +10,7 @@
         <image mode="heightFix"  src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/head.png"/>
     </view>
     <view class="module-list">
-        <view class="module-item" wx:for="{{moduleList}}" data-url="/pages/settings/index" wx:key="this" bindtap="goModule">
+        <view class="module-item" wx:for="{{moduleList}}" data-url="{{item.url}}" wx:key="this" bindtap="goModule">
             <text class="module-name">{{item.name}}</text>
         </view>
     </view>

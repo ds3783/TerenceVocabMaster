@@ -40,6 +40,21 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/lexicon/setUserLexiconList',
     },
+    {
+        name: 'loadNextTopic',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/loadNextTopic',
+    },
+    {
+        name: 'loadPreviousTopic',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/loadPreviousTopic',
+    },
+    {
+        name: 'saveTopicChoice',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/saveTopicChoice',
+    },
     
 ];
 

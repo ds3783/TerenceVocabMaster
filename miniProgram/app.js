@@ -12,6 +12,23 @@ App({
 
     },
     onLaunch() {
+
+        wx.loadFontFace({
+            family: 'Handwriting',
+            source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Handwriting.ttf")',
+            global: true,
+            success: function(){
+                wx.loadFontFace({
+                    family: 'Barlow',
+                    source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Barlow-SemiBold.ttf")',
+                    global: true,
+                    success: console.log
+                });
+            }
+        });
+
+        
+        
         this.globalData.userInfo = null;
 
         function onNetworkFailure(){

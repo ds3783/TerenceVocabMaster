@@ -1,0 +1,123 @@
+/* pages/training/index.wxss */
+
+.page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/background2.jpg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.nav-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx 16rpx;
+    height: 100rpx;
+}
+
+.nav-bar .previous {
+    padding: 8rpx 64rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/arrow-left.png") no-repeat center center;
+    background-size: 100% 100%;
+    text-align: center;
+    color: #3B2D1A;
+    font-size: 64rpx;
+    line-height: 100rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+
+.nav-bar .next {
+    padding: 8rpx 64rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/arrow-right.png") no-repeat center center;
+    background-size: 100% 100%;
+    text-align: center;
+    color: #3B2D1A;
+    font-size: 64rpx;
+    line-height: 100rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.nav-bar .disabled {
+    opacity: 0.5;
+}
+
+.topic {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 32rpx 32rpx;
+    color: #754926;
+    font-size: 64rpx;
+    line-height: 100rpx;
+    font-family: "Barlow", "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.topic .prompt {
+    font-size: 48rpx;
+    line-height: 64rpx;
+    font-weight: 700;
+    padding: 48rpx 0 8rpx;
+}
+
+.option-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 32rpx 32rpx;
+}
+
+.option-list .option-item {
+    width: 600rpx;
+    height: 120rpx;
+    margin-top: 40rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 120rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/button-wide.png") no-repeat center center;
+    background-size: 100% 100%;
+    box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: visible;
+}
+
+.option-list .option-item .correct{
+    display: block;
+    position: absolute;
+    width: 80rpx;
+    height: 80rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/icon_correct.png") no-repeat center center;
+    background-size: 100% 100%;
+    right: 32rpx;
+    top: -32rpx;
+}
+
+.option-list .option-item .incorrect{
+    display: block;
+    position: absolute;
+    width: 80rpx;
+    height: 80rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/icon_incorrect.png") no-repeat center center;
+    background-size: 100% 100%;
+    right: 32rpx;
+    top: -32rpx;
+}
+
+.option-list .option-item:first-of-type {
+    margin-top: 0;
+}
+
+.option-list .option-item .option-text {
+    width: 600rpx;
+    text-align: center;
+    color: #754926;
+    font-size: 80rpx;
+    line-height: 120rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}

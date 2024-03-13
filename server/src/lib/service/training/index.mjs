@@ -11,11 +11,16 @@ const SQLS = {
     DELETE_NOT_ANSWERED_TOPICS_BY_LEXICON: 'DELETE FROM train_topic WHERE `user_id`=? AND `lexicon_code`=? AND `user_choice` IS NULL',
     GET_REMAINING_TOPICS: 'SELECT COUNT(*) FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL',
     GET_RANDOM_WORD_NOT_SELECTED: 'SELECT * FROM vocabulary v WHERE `lexicon`=? AND NOT EXISTS(SELECT 1 FROM train_topic t WHERE `user_id` = ? AND v.word = t.word ) ORDER BY RAND() LIMIT 1',
-    GET_RANDOM_WORD: 'SELECT * FROM vocabulary v WHERE `lexicon`=?  ORDER BY RAND() LIMIT 1',
+    // GET_RANDOM_WORD: 'SELECT * FROM vocabulary v WHERE `lexicon`=?  ORDER BY RAND() LIMIT 1',
     GET_MAX_SEQUENCE_BY_USER: 'SELECT MAX(`sequence`) AS MAX_SEQUENCE FROM train_topic WHERE `user_id`=? ',
     INSERT_TOPIC: 'INSERT INTO train_topic(`id`,`user_id`,`lexicon_code`,`word`,`sequence`) VALUES(?,?,?,?,?)',
     GET_NON_OPTIONS_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL AND `options` IS NULL ORDER BY `sequence` LIMIT 10',
-    UPDATE_TOPIC_OPTIONS: 'UPDATE train_topic SET `options`=?,`correct_choice`=? WHERE `id`=?'
+    GET_NEXT_TRAINED_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `sequence`>? AND `user_choice` IS NOT NULL AND `options` IS NOT NULL ORDER BY `sequence` ASC LIMIT 1',
+    GET_NEXT_TRAINING_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL AND `options` IS NOT NULL ORDER BY `sequence` ASC LIMIT 1',
+    GET_PREV_TRAINING_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL AND `options` IS NOT NULL AND `sequence` < ? ORDER BY `sequence` DESC LIMIT 1',
+    UPDATE_TOPIC_OPTIONS: 'UPDATE train_topic SET `options`=?,`correct_choice`=? WHERE `id`=?',
+    GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER: 'SELECT * FROM train_topic WHERE `id`=? AND `user_id`=? AND `user_choice` IS NULL',
+    SAVE_TOPIC_CHOICE: 'UPDATE train_topic SET `user_choice`=?,`answer_time` = ? WHERE `id`=?',
 
 };
 
@@ -83,7 +88,7 @@ async function fullfillTopics(userId) {
                 let options = res.match(/^Answers:\nA. (.*)\nB. (.*)\nC. (.*)\nD. (.*)\n+Correct: ([ABCD])(\. .*)?$/);
                 let selections = [options[1], options[2], options[3], options[4]];
                 selections = selections.map((item) => {
-                    return item.replace(/\(.*\)/g, '').replace(/\s-.*$/,'').trim();
+                    return item.replace(/\(.*\)/g, '').replace(/\s-.*$/, '').trim();
                 });
                 let correct = {A: 0, B: 1, C: 2, D: 3}[options[5]];
                 let correctChoice = selections[correct];
@@ -93,7 +98,7 @@ async function fullfillTopics(userId) {
                     continue;
                 }
                 //shuffle
-                let shuffleTimes=Math.floor(Math.random()*10);
+                let shuffleTimes = Math.floor(Math.random() * 10);
                 for (let i = 0; i < shuffleTimes; i++) {
                     selections = selections.sort(() => (Math.random() * 10000) % 2 - 1);
                 }
@@ -134,18 +139,24 @@ async function generateTopics(userId, count) {
         conn = await DataBase.borrow(dbName);
         //generate topics
         while (remainingTopics > 0) {
-
+            let word;
             //random select lexicon
-            let lexicon = lexiconList[Math.floor(Math.random() * lexiconList.length)];
-            let word = await DataBase.doQuery(conn, SQLS.GET_RANDOM_WORD_NOT_SELECTED, [lexicon, userId]);
-            word = word[0];
-            if (!word) {
-                word = await DataBase.doQuery(conn, SQLS.GET_RANDOM_WORD, [lexicon]);
+            while (lexiconList.length > 0) {
+                let randomLexiconIndex = Math.floor(Math.random() * lexiconList.length);
+                let lexicon = lexiconList[randomLexiconIndex];
+
+                word = await DataBase.doQuery(conn, SQLS.GET_RANDOM_WORD_NOT_SELECTED, [lexicon, userId]);
                 word = word[0];
+                if (!word) {
+                    lexiconList.splice(randomLexiconIndex, 1);
+                } else {
+                    break;
+                }
             }
+
             if (!word) {
-                NestiaWeb.logger.error('No word found for lexicon:', lexicon);
-                continue;
+                NestiaWeb.logger.error('User has completed all lexicons, user_id:', userId);
+                return;
             }
             //fetch max  sequence
             let maxSeq = await DataBase.doQuery(conn, SQLS.GET_MAX_SEQUENCE_BY_USER, [userId]);
@@ -287,6 +298,79 @@ export async function setUserLexiconList(userId, lexiconList) {
 
     return lexiconUpdate;
 }
+
+
+export async function getUserNextTopic(userId, sequence = null) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        let rs;
+        if (sequence !== null) {
+            rs = await DataBase.doQuery(conn, SQLS.GET_NEXT_TRAINED_TOPICS, [userId, sequence]);
+            if (rs.length > 0) {
+                let result = rs[0];
+                result.options = JSON.parse(result.options);
+                return result;
+            }
+        }
+        rs = await DataBase.doQuery(conn, SQLS.GET_NEXT_TRAINING_TOPICS, [userId]);
+        if (rs.length === 0) {
+            return null;
+        }
+        let result = rs[0];
+        result.options = JSON.parse(result.options);
+        return result;
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+
+export async function getUserPreviousTopic(userId, sequence) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        let rs = await DataBase.doQuery(conn, SQLS.GET_PREV_TRAINING_TOPICS, [userId, sequence]);
+        if (rs.length === 0) {
+            return null;
+        }
+        let result = rs[0];
+        result.options = JSON.parse(result.options);
+        return result;
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+
+export async function saveUserChoice(userId, topicId, choice) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        let topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, Date.now(), userId]);
+        if (topics.length === 0) {
+            throw new Error('Invalid topic id or user id or topic has been answered');
+        }
+        await DataBase.doQuery(conn, SQLS.SAVE_TOPIC_CHOICE, [choice, topicId]);
+
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+    
 
 
 

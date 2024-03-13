@@ -32,17 +32,15 @@ Page({
 
         let moduleList = this.data.moduleList;
         moduleList.push({
+            name: "背单词",
+            url: '/pages/training/index',
+        })
+        moduleList.push({
             name: "设置",
             url: '/pages/settings/index',
         })
         this.setData({'moduleList': moduleList});
         console.log(this.data.moduleList)
-        wx.loadFontFace({
-            family: 'Handwriting',
-            source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Handwriting.ttf")',
-            global: true,
-            success: console.log
-        });
         //START: prefetch resources
         for (let url of PREFETCH_RESOURCES) {
             wx.getImageInfo({

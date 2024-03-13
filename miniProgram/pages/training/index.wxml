@@ -1,0 +1,25 @@
+<!--pages/training/index.wxml-->
+<scroll-view class="page" scroll-y type="list">
+    <view class="nav-bar">
+        <view class="previous {{!hasPrevious?'disabled':''}}" bind:tap="goPrevious">
+            上一题
+        </view>
+        <view class="next {{!hasNext?'disabled':''}}" bind:tap="goNext">
+            下一题
+        </view>
+    </view>
+    <view wx:if="{{topic}}">
+        <view class="topic">
+            <text class="word">{{topic.word}}</text>
+            <text class="prompt">请选择意思最为贴近的选项</text>
+        </view>
+        <view class="option-list">
+            <!--        -->
+            <view class="option-item" wx:for="{{topic.options}}" data-choice="{{index}}" wx:key="this" bindtap="chooseOption">
+                <text class="option-text">{{item}}</text>
+                <view class="correct" wx:if="{{null!==topic.user_choice&&(''+index)===topic.correct_choice}}"></view>
+                <view class="incorrect" wx:if="{{(''+index)===topic.user_choice&&topic.user_choice!==topic.correct_choice}}"></view>
+            </view>
+        </view>
+    </view>
+</scroll-view>
