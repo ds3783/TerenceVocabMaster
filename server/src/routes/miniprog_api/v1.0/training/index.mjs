@@ -8,8 +8,8 @@ import * as Aliyun from "../../../../lib/aliyun/index.mjs";
 import {
     getAllLexicon,
     getUserLexiconList,
-    getUserNextTopic, getUserPreviousTopic, saveUserChoice,
-    setUserLexiconList
+    getUserNextTopic, getUserPreviousTopic, getUserTrainSummary, saveUserChoice,
+    setUserLexiconList, trainingStartOver
 } from "../../../../lib/service/training/index.mjs";
 
 const router = express.Router();
@@ -44,7 +44,7 @@ router.get('/loadNextTopic', async function (req, res, ignoredNext) {
         } else {
             //TODO get summary
             res.send({
-                noMoreTopics:true
+                noMoreTopics: true
             });
         }
     } catch (e) {
@@ -101,13 +101,6 @@ router.post('/saveTopicChoice', async function (req, res, ignoredNext) {
         res.status(400).send('Invalid parameters');
         return;
     }
-    let topicId = req.body.topic_id;
-    let choice = req.body.choice;
-    if (!topicId || !choice) {
-        res.status(400).send('Invalid parameters');
-        return;
-    }
-    choice = '' + choice;
     try {
         let checked = await checkUserLogin(openId, envString, token);
         if (!checked.result) {
@@ -125,6 +118,62 @@ router.post('/saveTopicChoice', async function (req, res, ignoredNext) {
             return;
         }
         res.send({});
+    } catch (e) {
+        NestiaWeb.logger.error('Error fetch authorization', e);
+    }
+});
+
+
+/* GET home page. */
+router.post('/trainingStartOver', async function (req, res, ignoredNext) {
+    let envString = req.body.env;
+    let token = req.body.token;
+    let openId = req.body.open_id;
+    if (!openId || !token || !envString) {
+        res.status(400).send('Invalid parameters');
+        return;
+    }
+    try {
+        let checked = await checkUserLogin(openId, envString, token);
+        if (!checked.result) {
+            res.status(401).send('Invalid user or token expired');
+            return;
+        }
+        let user = checked.user;
+        try {
+            await trainingStartOver(user.id);
+        } catch (e) {
+            NestiaWeb.logger.error('Error saveUserChoice', e);
+            res.status(500).send('Internal error');
+            // res.send({});
+            //
+            return;
+        }
+        res.send({});
+    } catch (e) {
+        NestiaWeb.logger.error('Error fetch authorization', e);
+    }
+});
+
+/* GET home page. */
+router.get('/getMySummary', async function (req, res, ignoredNext) {
+    let envString = req.query.env;
+    let token = req.query.token;
+    let openId = req.query.open_id;
+    if (!openId || !token || !envString ) {
+        res.status(400).send('Invalid parameters');
+        return;
+    }
+    try {
+        let checked = await checkUserLogin(openId, envString, token);
+        if (!checked.result) {
+            res.status(401).send('Invalid user or token expired');
+            return;
+        }
+        let user = checked.user;
+        let summary = await getUserTrainSummary(user.id);
+
+        res.send(summary||{});
     } catch (e) {
         NestiaWeb.logger.error('Error fetch authorization', e);
     }

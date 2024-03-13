@@ -55,6 +55,16 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/training/saveTopicChoice',
     },
+    {
+        name: 'getMySummary',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/getMySummary',
+    },
+    {
+        name: 'trainingStartOver',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/trainingStartOver',
+    },
     
 ];
 

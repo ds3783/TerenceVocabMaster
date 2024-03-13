@@ -109,7 +109,7 @@ Page({
                 }
                 let result = res.data;
                 if (result.noMoreTopics){
-                    wx.navigateTo({
+                    wx.redirectTo({
                         url: '/pages/training/summary',
                     });
                 }else{

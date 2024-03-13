@@ -21,6 +21,9 @@ const SQLS = {
     UPDATE_TOPIC_OPTIONS: 'UPDATE train_topic SET `options`=?,`correct_choice`=? WHERE `id`=?',
     GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER: 'SELECT * FROM train_topic WHERE `id`=? AND `user_id`=? AND `user_choice` IS NULL',
     SAVE_TOPIC_CHOICE: 'UPDATE train_topic SET `user_choice`=?,`answer_time` = ? WHERE `id`=?',
+    GET_COUNT_ANSWERED_TOPIC: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL',
+    GET_COUNT_CORRECT_TOPIC: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL AND `user_choice` = `correct_choice`',
+    DELETE_USER_TOPIC: 'DELETE FROM train_topic WHERE `user_id`=?',
 
 };
 
@@ -166,7 +169,7 @@ async function generateTopics(userId, count) {
                 maxSeq = maxSeq[0]['MAX_SEQUENCE'] * 1 + 1;
             }
             //insert topic
-            await DataBase.doQuery(conn, SQLS.INSERT_TOPIC, [uuid(), userId, lexicon, word.word, maxSeq]);
+            await DataBase.doQuery(conn, SQLS.INSERT_TOPIC, [uuid(), userId, word.lexicon, word.word, maxSeq]);
             remainingTopics--;
         }
     } catch (e) {
@@ -370,7 +373,54 @@ export async function saveUserChoice(userId, topicId, choice) {
         }
     }
 }
-    
 
 
+export async function getUserTrainSummary(userId) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        let answered = await DataBase.doQuery(conn, SQLS.GET_COUNT_ANSWERED_TOPIC, [userId]);
+        answered = answered[0]['CNT'];
+        let correct = await DataBase.doQuery(conn, SQLS.GET_COUNT_CORRECT_TOPIC, [userId]);
+        correct = correct[0]['CNT'];
+        let result = {
+            words_correct: correct,
+            words_total: answered,
+        };
+        if (answered > 0) {
+            result.correct_rate = (correct / answered * 100).toFixed(2);
+        }
+        return result;
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+
+export async function trainingStartOver(userId) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        await DataBase.doQuery(conn, SQLS.DELETE_USER_TOPIC, [userId]);
+
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+    NestiaWeb.logger.info('User start over:', userId);
+    generateTopics(userId, MIN_BUFFED_TOPICS).then(() => {
+        NestiaWeb.logger.info(`Finished generate [${MIN_BUFFED_TOPICS}] topics for user:`, userId);
+        fullfillTopics(userId).then(() => {
+            NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+        });
+    });
+}
 

@@ -1,0 +1,100 @@
+/* pages/training/summary.wxss */
+
+.page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/background-stage.jpg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.image {
+    width: 256rpx;
+    height: 256rpx;
+    margin: 64rpx auto 0;
+    text-align: center;
+}
+
+.image image {
+    width: 256rpx;
+    height: 256rpx;
+}
+
+.summary{
+    margin:32rpx 32rpx;
+    width: calc(100% - 128rpx);
+    background: rgba(255,255,255,0.33);
+    border-radius: 32rpx;
+    padding: 16rpx 32rpx;
+    color: #3B2D1A;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.summary .congratulations{
+    font-size: 64rpx;
+    line-height: 100rpx;
+    text-align: center;
+    font-weight: 900;
+}
+
+.summary .line-total{
+    font-size: 48rpx;
+    line-height: 100rpx;
+    text-align: center;
+}
+
+.summary .line-total .center{
+    margin-left:16rpx;
+    margin-right:16rpx;
+    font-size: 52rpx;
+    font-weight: 900;
+}
+.summary .line-rate{
+    font-size: 36rpx;
+    line-height: 100rpx;
+    text-align: center;
+}
+
+.summary .line-rate .center{
+    margin-left:16rpx;
+    margin-right:16rpx;
+    font-size: 48rpx;
+    font-weight: 900;
+}
+
+
+.option-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 32rpx 32rpx;
+}
+
+.option-list .option-item {
+    width: 600rpx;
+    height: 120rpx;
+    margin-top: 40rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 120rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/button-wide.png") no-repeat center center;
+    background-size: 100% 100%;
+    box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: visible;
+}
+
+.option-list .option-item .option-text {
+    width: 600rpx;
+    text-align: center;
+    color: #754926;
+    font-size: 80rpx;
+    line-height: 120rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
