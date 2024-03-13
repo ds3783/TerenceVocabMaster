@@ -44,9 +44,7 @@ router.get('/loadNextTopic', async function (req, res, ignoredNext) {
         } else {
             //TODO get summary
             res.send({
-                topic: null,
-                hasPrevious: false,
-                hasNext: false,
+                noMoreTopics:true
             });
         }
     } catch (e) {

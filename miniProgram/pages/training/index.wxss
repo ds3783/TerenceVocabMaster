@@ -49,11 +49,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 32rpx 32rpx;
+    margin: 32rpx 32rpx;
+    padding: 16rpx;
     color: #754926;
     font-size: 64rpx;
     line-height: 100rpx;
     font-family: "Barlow", "Handwriting", "Heiti SC", "sans-serif";
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 16rpx;
 }
 
 .topic .prompt {

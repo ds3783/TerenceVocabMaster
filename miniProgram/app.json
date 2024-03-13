@@ -5,7 +5,8 @@
     "pages/logs/logs",
     "pages/settings/index",
     "pages/settings/lexicon_select",
-    "pages/training/index"
+    "pages/training/index",
+    "pages/training/summary"
   ],
   "window": {
     "navigationBarTextStyle": "black",

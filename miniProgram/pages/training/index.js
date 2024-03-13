@@ -108,12 +108,17 @@ Page({
                     return;
                 }
                 let result = res.data;
-
-                this.setData({
-                    topic: result.topic,
-                    hasPrevious: result.hasPrevious,
-                    hasNext: result.hasNext,
-                });
+                if (result.noMoreTopics){
+                    wx.navigateTo({
+                        url: '/pages/training/summary',
+                    });
+                }else{
+                    this.setData({
+                        topic: result.topic,
+                        hasPrevious: result.hasPrevious,
+                        hasNext: result.hasNext,
+                    });
+                }
                 wx.hideLoading();
             },
             fail: res => {
@@ -160,6 +165,8 @@ Page({
                     $this.setData({busy: false}, () => {
                         $this.loadNext();
                     });
+                }else{
+                    $this.loadNext();
                 }
             }, 1500);
             wx.request({
@@ -184,7 +191,7 @@ Page({
                                 if (res.confirm) {
                                     if ($this.data.busy) {
                                         $this.setData({busy: false}, () => {
-                                            $this.loadNext();
+                                            // $this.loadNext();
                                         });
                                     }
                                 }
@@ -197,7 +204,7 @@ Page({
 
                     if ($this.data.busy) {
                         $this.setData({busy: false}, () => {
-                            $this.loadNext();
+                            // $this.loadNext();
                         });
                     }
                 },
@@ -212,7 +219,7 @@ Page({
                             if (res.confirm) {
                                 if ($this.data.busy) {
                                     $this.setData({busy: false}, () => {
-                                        $this.loadNext();
+                                        // $this.loadNext();
                                     });
                                 }
                             }
