@@ -101,6 +101,13 @@ router.post('/saveTopicChoice', async function (req, res, ignoredNext) {
         res.status(400).send('Invalid parameters');
         return;
     }
+    let topicId = req.body.topic_id;
+    let choice = req.body.choice;
+    if (!topicId || !choice) {
+        res.status(400).send('Invalid parameters');
+        return;
+    }
+    choice = '' + choice;
     try {
         let checked = await checkUserLogin(openId, envString, token);
         if (!checked.result) {
@@ -160,7 +167,7 @@ router.get('/getMySummary', async function (req, res, ignoredNext) {
     let envString = req.query.env;
     let token = req.query.token;
     let openId = req.query.open_id;
-    if (!openId || !token || !envString ) {
+    if (!openId || !token || !envString) {
         res.status(400).send('Invalid parameters');
         return;
     }
@@ -173,7 +180,7 @@ router.get('/getMySummary', async function (req, res, ignoredNext) {
         let user = checked.user;
         let summary = await getUserTrainSummary(user.id);
 
-        res.send(summary||{});
+        res.send(summary || {});
     } catch (e) {
         NestiaWeb.logger.error('Error fetch authorization', e);
     }
