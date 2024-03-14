@@ -20,7 +20,7 @@ Page({
     /**
      * 生命周期函数--监听页面加载
      */
-    onLoad(options) {
+    onLoad() {
         const appInstance = getApp();
 
         this.setData({userInfo: appInstance.globalData.userInfo});
@@ -34,11 +34,15 @@ Page({
         moduleList.push({
             name: "背单词",
             url: '/pages/training/index',
-        })
+        })    ;
+        moduleList.push({
+            name: "错题集",
+            url: '/pages/training/collected_mistakes',
+        })    ;
         moduleList.push({
             name: "设置",
             url: '/pages/settings/index',
-        })
+        })  ;
         this.setData({'moduleList': moduleList});
         console.log(this.data.moduleList)
         //START: prefetch resources
@@ -113,21 +117,15 @@ Page({
             desc: '需要获得您的头像和昵称信息',
 
             success: function (userRes) {
-                var userInfo = userRes.userInfo;
-                var avatarUrl = userInfo.avatarUrl; // 用户头像
-                var nickName = userInfo.nickName; // 用户昵称
                 console.log('用户信息', userRes)
-                // 可以将 code 和用户信息发送到服务器进行进一步处理
-                // 服务器可以通过 code 获取 openid、unionid、session key
             },
             fail: function (err) {
-                // 用户拒绝授权，可以引导用户打开设置页面开启授权
                 console.log('getUserProfile fail', err);
             }
         });
     },
 
-    goProfile(e) {
+    goProfile() {
         if (!this.data.userInfo){
             console.log('Please wait for user info loaded.');
             wx.showToast({

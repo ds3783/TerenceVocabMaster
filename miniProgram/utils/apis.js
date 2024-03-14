@@ -65,6 +65,16 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/training/trainingStartOver',
     },
+    {
+        name: 'loadNextMistakeTopic',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/mistakes/loadNextMistakeTopic',
+    },
+    {
+        name: 'loadPreviousMistakeTopic',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/mistakes/loadPreviousMistakeTopic',
+    },
     
 ];
 

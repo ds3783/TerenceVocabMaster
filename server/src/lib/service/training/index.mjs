@@ -2,6 +2,7 @@ import NestiaWeb from "nestia-web";
 import DataBase from "../../db/index.mjs";
 import {v4 as uuid} from "uuid";
 import * as claude from "../../ai/claude.mjs";
+import {insertMistake} from "./mistakes.mjs";
 
 const SQLS = {
     GET_LEXICON_BY_USER_ID: "SELECT * FROM user_lexicon WHERE `user_id`=?",
@@ -24,6 +25,7 @@ const SQLS = {
     GET_COUNT_ANSWERED_TOPIC: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL',
     GET_COUNT_CORRECT_TOPIC: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL AND `user_choice` = `correct_choice`',
     DELETE_USER_TOPIC: 'DELETE FROM train_topic WHERE `user_id`=?',
+    GET_TOPIC_ID: 'SELECT * FROM train_topic WHERE `id`= ? AND `user_id`=?',
 
 };
 
@@ -357,6 +359,7 @@ export async function getUserPreviousTopic(userId, sequence) {
 export async function saveUserChoice(userId, topicId, choice) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
     let conn = null;
+    let topic;
     try {
         conn = await DataBase.borrow(dbName);
         let topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, userId]);
@@ -364,7 +367,8 @@ export async function saveUserChoice(userId, topicId, choice) {
             throw new Error('Invalid topic id or user id or topic has been answered');
         }
         await DataBase.doQuery(conn, SQLS.SAVE_TOPIC_CHOICE, [choice, Date.now(), topicId]);
-
+        topic = await DataBase.doQuery(conn, SQLS.GET_TOPIC_ID, [topicId, userId]);
+        topic = topic[0];
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {
@@ -372,6 +376,10 @@ export async function saveUserChoice(userId, topicId, choice) {
             DataBase.release(conn);
         }
     }
+    if (topic.user_choice !== topic.correct_choice) {
+        await insertMistake(topic);
+    }
+    return topic;
 }
 
 

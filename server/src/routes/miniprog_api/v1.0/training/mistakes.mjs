@@ -1,18 +1,17 @@
 import express from 'express';
 import NestiaWeb from "nestia-web";
 import {checkUserLogin} from "../../../../lib/service/user/index.mjs";
+
 import {
-    getUserNextTopic, getUserPreviousTopic, getUserTrainSummary, saveUserChoice,
-    trainingStartOver
+    getUserTrainSummary, saveUserChoice, trainingStartOver
 } from "../../../../lib/service/training/index.mjs";
+import {getUserNextMistakeTopic, getUserPreviousMistakeTopic} from "../../../../lib/service/training/mistakes.mjs";
 
 const router = express.Router();
 
-import {default as mistakeRouter} from './mistakes.mjs';
-router.use('/mistakes', mistakeRouter);
 
 /* GET home page. */
-router.get('/loadNextTopic', async function (req, res, ignoredNext) {
+router.get('/loadNextMistakeTopic', async function (req, res, ignoredNext) {
     let envString = req.query.env;
     let token = req.query.token;
     let openId = req.query.open_id;
@@ -28,17 +27,17 @@ router.get('/loadNextTopic', async function (req, res, ignoredNext) {
             return;
         }
         let user = checked.user;
-        let topic = await getUserNextTopic(user.id, currentTopicSequence);
+        let topic = await getUserNextMistakeTopic(user.id, currentTopicSequence);
 
         if (topic) {
-            let previous = await getUserPreviousTopic(user.id, topic.sequence);
+            let previous = await getUserPreviousMistakeTopic(user.id, topic.sequence);
+            let next = await getUserNextMistakeTopic(user.id, topic.sequence);
             res.send({
                 topic: topic,
                 hasPrevious: !!previous,
-                hasNext: topic.user_choice !== null,
+                hasNext: !!next,
             })
         } else {
-            //TODO get summary
             res.send({
                 noMoreTopics: true
             });
@@ -49,7 +48,7 @@ router.get('/loadNextTopic', async function (req, res, ignoredNext) {
 
 });
 
-router.get('/loadPreviousTopic', async function (req, res, ignoredNext) {
+router.get('/loadPreviousMistakeTopic', async function (req, res, ignoredNext) {
     let envString = req.query.env;
     let token = req.query.token;
     let openId = req.query.open_id;
@@ -65,17 +64,16 @@ router.get('/loadPreviousTopic', async function (req, res, ignoredNext) {
             return;
         }
         let user = checked.user;
-        let topic = await getUserPreviousTopic(user.id, currentTopicSequence);
+        let topic = await getUserPreviousMistakeTopic(user.id, currentTopicSequence);
 
         if (topic) {
-            let previous = await getUserPreviousTopic(user.id, topic.sequence);
+            let previous = await getUserPreviousMistakeTopic(user.id, topic.sequence);
             res.send({
                 topic: topic,
                 hasPrevious: !!previous,
                 hasNext: true,
             })
         } else {
-            //TODO get summary
             res.send({
                 topic: null,
                 hasPrevious: false,

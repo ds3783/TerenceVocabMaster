@@ -6,7 +6,8 @@
     "pages/settings/index",
     "pages/settings/lexicon_select",
     "pages/training/index",
-    "pages/training/summary"
+    "pages/training/summary",
+    "pages/training/collected_mistakes"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -1,8 +1,8 @@
 <!--pages/index/home.wxml-->
-<scroll-view class="home" scroll-y type="list">
+<view class="home" >
     <!--用户登录-->
     <view class="user-login" bindtap="goProfile">
-        <span>{{userInfo.name}}</span>
+        <text>{{userInfo.name}}</text>
         <image mode="heightFix" src="{{userInfo.avatar}}"/>
     </view>
     <!--功能模块列表-->
@@ -14,4 +14,4 @@
             <text class="module-name">{{item.name}}</text>
         </view>
     </view>
-</scroll-view>
+</view>
