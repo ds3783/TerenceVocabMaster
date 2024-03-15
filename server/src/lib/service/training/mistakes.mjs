@@ -184,10 +184,12 @@ export async function saveBoosterChoice(userId, topicId, choice, shuffle) {
         }
         if ('' + choice !== '' + correctIndex) {
             topic.mistake_times++;
+            topic.correct_times = 0;
         } else {
             topic.correct_times++;
         }
-        if (topic.correct_times - topic.mistake_times > 3) {
+        // user must correct 3 times without mistakes to remove it from mistake table
+        if (topic.correct_times > 3) {
             //if correct_times-mistake_times>5, means user has mastered this topic, delete it from mistake table
             await DataBase.doQuery(conn, SQLS.DELETE_BOOST_TOPIC_CHOICE, [topicId]);
         } else {
