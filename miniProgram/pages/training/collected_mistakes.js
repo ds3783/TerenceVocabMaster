@@ -110,7 +110,7 @@ Page({
                 let result = res.data;
                 if (result.noMoreTopics) {
                     wx.redirectTo({
-                        url: '/pages/training/summary',
+                        url: '/pages/training/boosting_complete',
                     });
                 } else {
                     let options = [];
