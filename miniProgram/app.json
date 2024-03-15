@@ -8,7 +8,8 @@
     "pages/training/index",
     "pages/training/summary",
     "pages/training/collected_mistakes",
-    "pages/training/boosting_exercise"
+    "pages/training/boosting_exercise",
+    "pages/training/boosting_complete"
   ],
   "window": {
     "navigationBarTextStyle": "black",

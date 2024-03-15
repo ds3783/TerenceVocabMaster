@@ -1,0 +1,22 @@
+<!--pages/training/boosting_complete.wxml-->
+<view class="page" >
+    <view class="image">
+        <image src="https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/wreath.png"></image>
+    </view>
+    <view class="summary">
+        <view class="congratulations">
+            <text>恭喜你！</text>
+        </view>
+        <view class="summary-text">
+            <text class="line1">您已经成功掌握了所有之前遇到的难题！</text>
+            <text  class="line2">继续保持，您的未来定将更加辉煌！</text>
+        </view>
+    </view>
+
+    <view class="option-list">
+        <!--        -->
+        <view class="option-item" bindtap="startOver">
+            <text class="option-text">返 回</text>
+        </view>
+    </view>
+</view>
