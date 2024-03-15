@@ -17,7 +17,7 @@ App({
             family: 'Handwriting',
             source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Handwriting.ttf")',
             global: true,
-            success: function(){
+            success: function () {
                 wx.loadFontFace({
                     family: 'Barlow',
                     source: 'url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/fonts/Barlow-SemiBold.ttf")',
@@ -27,11 +27,10 @@ App({
             }
         });
 
-        
-        
+
         this.globalData.userInfo = null;
 
-        function onNetworkFailure(){
+        function onNetworkFailure() {
             wx.showModal({
                 title: '网络错误',
                 content: '无法访问服务器，请稍后再试',
@@ -40,10 +39,10 @@ App({
                 success: function (res) {
                     if (res.confirm) {
                         wx.exitMiniProgram({
-                            success: function() {
+                            success: function () {
                                 console.log('小程序已退出');
                             },
-                            fail: function(err) {
+                            fail: function (err) {
                                 console.error('退出小程序失败', err);
                             }
                         });
@@ -57,7 +56,7 @@ App({
         const envString = wx.getAccountInfoSync().miniProgram.envVersion;
         console.log('cachedUser', cachedUser);
         global.eventEmitter.on('userInfoUpdated', (userInfo) => {
-            wx.setStorageSync('user',userInfo);
+            wx.setStorageSync('user', userInfo);
         });
         if (cachedUser) {
             if (!cachedUser.open_id || !cachedUser.token) {
@@ -75,12 +74,12 @@ App({
                     },
                     method: 'POST',
                     success: res => {
-                        if (res.statusCode !== 200) {
+                        if (res.statusCode !== 200 && res.statusCode !== 401) {
                             onNetworkFailure();
                             return;
                         }
-                        if (!res.data.result) {
-                            console.log('Invalid user info',res);
+                        if (res.statusCode === 401 || !res.data.result) {
+                            console.log('Invalid user info', res);
                             console.log('Clear user info');
                             cachedUser = null;
                             wx.removeStorageSync('user');

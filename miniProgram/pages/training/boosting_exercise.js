@@ -1,4 +1,4 @@
-// pages/training/index.js
+// pages/training/boosting_exercise.js
 const API = require("../../utils/apis");
 Page({
 
@@ -6,10 +6,8 @@ Page({
      * 页面的初始数据
      */
     data: {
-        hasPrevious: false,
-        hasNext: false,
-        topic: null,
         busy: false,
+        topic: null,
     },
 
     /**
@@ -96,16 +94,13 @@ Page({
             token: userInfo.token,
             env: envString,
         };
-        if (!firstLoad && this.data.topic) {
-            reqData.topic_sequence = this.data.topic.sequence;
-        }
         wx.request({
-            url: API('loadNextTopic'),
-            data:reqData,
+            url: API('loadNextBoostingTopic'),
+            data: reqData,
             method: 'GET',
             success: res => {
                 if (res.statusCode !== 200) {
-                    console.log('loadNextTopic load fail:', res);
+                    console.log('loadNextBoostingTopic load fail:', res);
                     wx.hideLoading();
                     wx.showModal({
                         title: '警告',
@@ -125,21 +120,19 @@ Page({
                     return;
                 }
                 let result = res.data;
-                if (result.noMoreTopics){
+                if (result.noMoreTopics) {
                     wx.redirectTo({
-                        url: '/pages/training/summary',
+                        url: '/pages/training/boosting_complete',
                     });
-                }else{
+                } else {
                     this.setData({
                         topic: result.topic,
-                        hasPrevious: result.hasPrevious,
-                        hasNext: result.hasNext,
                     });
                 }
                 wx.hideLoading();
             },
             fail: res => {
-                console.log('loadNextTopic load  fail:', res);
+                console.log('loadNextBoostingTopic load  fail:', res);
                 wx.showModal({
                     title: '警告',
                     content: '网络错误，请稍后再试',
@@ -182,18 +175,19 @@ Page({
                     $this.setData({busy: false}, () => {
                         $this.loadNext();
                     });
-                }else{
+                } else {
                     $this.loadNext();
                 }
             }, 1500);
             wx.request({
-                url: API('saveTopicChoice'),
+                url: API('saveBoostingTopicChoice'),
                 data: {
                     open_id: userInfo.open_id,
                     token: userInfo.token,
                     env: envString,
                     topic_id: this.data.topic.id,
                     choice: choice,
+                    shuffle: this.data.topic.shuffle,
                 },
                 method: 'POST',
                 success: res => {
@@ -221,7 +215,6 @@ Page({
 
                     if ($this.data.busy) {
                         $this.setData({busy: false}, () => {
-                            // $this.loadNext();
                         });
                     }
                 },
@@ -247,67 +240,4 @@ Page({
 
         });
     },
-
-    goPrevious() {
-        if (!this.data.hasPrevious) {
-            //do nothing
-            return;
-        }
-        wx.showLoading({mask: true, title: '题目加载中...'});
-        const appInstance = getApp();
-
-        let userInfo = appInstance.globalData.userInfo;
-        const envString = wx.getAccountInfoSync().miniProgram.envVersion;
-        wx.request({
-            url: API('loadPreviousTopic'),
-            data: {
-                open_id: userInfo.open_id,
-                token: userInfo.token,
-                env: envString,
-                topic_sequence: this.data.topic.sequence,
-            },
-            method: 'GET',
-            success: res => {
-                if (res.statusCode !== 200) {
-                    console.log('loadPreviousTopic load fail:', res);
-                    wx.hideLoading();
-                    wx.showModal({
-                        title: '警告',
-                        content: '网络错误，请稍后再试',
-                        showCancel: false, // 不显示取消按钮
-                        confirmText: '确定', // 确定按钮的文字，默认为"确定"
-
-                    });
-                    return;
-                }
-                let result = res.data;
-
-                this.setData({
-                    topic: result.topic,
-                    hasPrevious: result.hasPrevious,
-                    hasNext: result.hasNext,
-                });
-                wx.hideLoading();
-            },
-            fail: res => {
-                console.log('loadPreviousTopic load  fail:', res);
-                wx.showModal({
-                    title: '警告',
-                    content: '网络错误，请稍后再试',
-                    showCancel: false, // 不显示取消按钮
-                    confirmText: '确定', // 确定按钮的文字，默认为"确定"
-
-                });
-                wx.hideLoading();
-            }
-        });
-    },
-
-    goNext() {
-        if (!this.data.hasNext) {
-            //do nothing
-            return;
-        }
-        this.loadNext(false)
-    }
 })

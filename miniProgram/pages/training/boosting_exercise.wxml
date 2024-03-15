@@ -1,13 +1,6 @@
-<!--pages/training/index.wxml-->
+<!--pages/training/boosting_exercise.wxml-->
 <view class="page" >
-    <view class="nav-bar">
-        <view class="previous {{!hasPrevious?'disabled':''}}" bind:tap="goPrevious">
-            上一题
-        </view>
-        <view class="next {{!hasNext?'disabled':''}}" bind:tap="goNext">
-            下一题
-        </view>
-    </view>
+    
     <view wx:if="{{topic}}">
         <view class="topic">
             <text class="word">{{topic.word}}</text>

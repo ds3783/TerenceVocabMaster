@@ -360,12 +360,24 @@ export async function saveUserChoice(userId, topicId, choice) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
     let conn = null;
     let topic;
+    let topics;
     try {
         conn = await DataBase.borrow(dbName);
-        let topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, userId]);
-        if (topics.length === 0) {
-            throw new Error('Invalid topic id or user id or topic has been answered');
+         topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, userId]);
+        
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
         }
+    }
+    if (topics.length === 0) {
+        throw new Error('Invalid topic id or user id or topic has been answered');
+    }
+    try {
+        conn = await DataBase.borrow(dbName);
+
         await DataBase.doQuery(conn, SQLS.SAVE_TOPIC_CHOICE, [choice, Date.now(), topicId]);
         topic = await DataBase.doQuery(conn, SQLS.GET_TOPIC_ID, [topicId, userId]);
         topic = topic[0];

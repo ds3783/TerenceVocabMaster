@@ -1,9 +1,6 @@
 const global = require('../../utils/global');
 
-const PREFETCH_RESOURCES = [
-    'https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/default_background.jpg',
-    'https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/plate.png',
-    ];
+const PREFETCH_RESOURCES = ['https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/default_background.jpg', 'https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/plate.png',];
 
 // pages/index/home.js
 Page({
@@ -32,24 +29,23 @@ Page({
 
         let moduleList = this.data.moduleList;
         moduleList.push({
-            name: "背单词",
-            url: '/pages/training/index',
-        })    ;
+            name: "背单词", url: '/pages/training/index',
+        });
         moduleList.push({
-            name: "错题集",
-            url: '/pages/training/collected_mistakes',
-        })    ;
+            name: "错题集", url: '/pages/training/collected_mistakes',
+        });
         moduleList.push({
-            name: "设置",
-            url: '/pages/settings/index',
-        })  ;
+            name: "强化训练", url: '/pages/training/boosting_exercise',
+        });
+        moduleList.push({
+            name: "设置", url: '/pages/settings/index',
+        });
         this.setData({'moduleList': moduleList});
         console.log(this.data.moduleList)
         //START: prefetch resources
         for (let url of PREFETCH_RESOURCES) {
             wx.getImageInfo({
-                src:url,
-                success: function (res) {
+                src: url, success: function (res) {
                     console.log('prefetch success', res);
                 }
             });
@@ -60,11 +56,11 @@ Page({
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady() {
-       /* wx.getSetting({
-            success(res) {
-                console.log(11, res.authSetting)
-            }
-        })*/
+        /* wx.getSetting({
+             success(res) {
+                 console.log(11, res.authSetting)
+             }
+         })*/
     },
 
     /**
@@ -112,27 +108,22 @@ Page({
     onAuthorizeClick() {
         // scope.userInfo
         wx.getUserProfile({
-            withCredentials: true,
-            lang: 'zh_CN', // 'en' 'zh_CN' 'zh_TW'
+            withCredentials: true, lang: 'zh_CN', // 'en' 'zh_CN' 'zh_TW'
             desc: '需要获得您的头像和昵称信息',
 
             success: function (userRes) {
                 console.log('用户信息', userRes)
-            },
-            fail: function (err) {
+            }, fail: function (err) {
                 console.log('getUserProfile fail', err);
             }
         });
     },
 
     goProfile() {
-        if (!this.data.userInfo){
+        if (!this.data.userInfo) {
             console.log('Please wait for user info loaded.');
             wx.showToast({
-                title: '请稍等用户信息加载完成',
-                icon: 'fail',
-                duration: 2000,
-                mask: true
+                title: '请稍等用户信息加载完成', icon: 'fail', duration: 2000, mask: true
             });
             return;
         }
@@ -143,13 +134,10 @@ Page({
 
     goModule(e) {
         console.log('goModule', this.data.userInfo);
-        if (!this.data.userInfo){
+        if (!this.data.userInfo) {
             console.log('Please wait for user info loaded.');
             wx.showToast({
-                title: '请稍等用户信息加载完成',
-                icon: 'fail', 
-                duration: 2000, 
-                mask: true 
+                title: '请稍等用户信息加载完成', icon: 'fail', duration: 2000, mask: true
             });
             return;
         }
