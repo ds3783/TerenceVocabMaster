@@ -10,7 +10,8 @@ const SQLS = {
     GET_NEXT_RANDOM_MISTAKE_TOPICS: 'SELECT * FROM train_topic_mistakes WHERE user_id = ? ORDER BY RAND() LIMIT 1',
     GET_TOPIC_BY_ID_AND_USER: 'SELECT * FROM train_topic_mistakes WHERE id = ? AND user_id = ?',
     DELETE_BOOST_TOPIC_CHOICE: 'DELETE FROM train_topic_mistakes WHERE id = ?',
-    SAVE_BOOST_TOPIC_CHOICE: 'UPDATE train_topic_mistakes SET correct_times = ?, mistake_times = ?, options = ?, correct_choice = ?, user_choice = ?, answer_time = ? WHERE id = ?'
+    SAVE_BOOST_TOPIC_CHOICE: 'UPDATE train_topic_mistakes SET correct_times = ?, mistake_times = ?, options = ?, correct_choice = ?, user_choice = ?, answer_time = ? WHERE id = ?',
+    DELETE_USER_MISTAKE_TOPIC: 'DELETE FROM train_topic_mistakes WHERE user_id = ?'
 
 };
 
@@ -196,6 +197,21 @@ export async function saveBoosterChoice(userId, topicId, choice, shuffle) {
             await DataBase.doQuery(conn, SQLS.SAVE_BOOST_TOPIC_CHOICE, [topic.correct_times, topic.mistake_times, JSON.stringify(resultOptions), correctIndex, choice, Date.now(), topicId]);
         }
 
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+}
+
+export async function clearUserMistakenTopics(userId) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        await DataBase.doQuery(conn, SQLS.DELETE_USER_MISTAKE_TOPIC, [userId]);
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {

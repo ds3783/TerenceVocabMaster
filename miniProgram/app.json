@@ -9,7 +9,8 @@
     "pages/training/summary",
     "pages/training/collected_mistakes",
     "pages/training/boosting_exercise",
-    "pages/training/boosting_complete"
+    "pages/training/boosting_complete",
+    "pages/settings/clear_data"
   ],
   "window": {
     "navigationBarTextStyle": "black",

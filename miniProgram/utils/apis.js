@@ -85,6 +85,11 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/training/mistakes/saveBoostingTopicChoice',
     },
+    {
+        name: 'deleteMyData',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/training/deleteMyData',
+    },
     
 ];
 

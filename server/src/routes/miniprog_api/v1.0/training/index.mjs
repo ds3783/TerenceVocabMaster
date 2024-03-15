@@ -9,6 +9,8 @@ import {
 const router = express.Router();
 
 import {default as mistakeRouter} from './mistakes.mjs';
+import {clearUserMistakenTopics} from "../../../../lib/service/training/mistakes.mjs";
+
 router.use('/mistakes', mistakeRouter);
 
 /* GET home page. */
@@ -151,6 +153,57 @@ router.post('/trainingStartOver', async function (req, res, ignoredNext) {
             // res.send({});
             //
             return;
+        }
+        res.send({});
+    } catch (e) {
+        NestiaWeb.logger.error('Error fetch authorization', e);
+    }
+});
+
+/* GET home page. */
+router.post('/deleteMyData', async function (req, res, ignoredNext) {
+    let envString = req.body.env;
+    let token = req.body.token;
+    let openId = req.body.open_id;
+    if (!openId || !token || !envString) {
+        res.status(400).send('Invalid parameters');
+        return;
+    }
+    let deletion = req.body.deletion;
+    if (!deletion) {
+        res.status(400).send('Invalid parameters');
+        return;
+    }
+    deletion = JSON.parse(deletion);
+    try {
+        let checked = await checkUserLogin(openId, envString, token);
+        if (!checked.result) {
+            res.status(401).send('Invalid user or token expired');
+            return;
+        }
+        let user = checked.user;
+        if (deletion.training_data) {
+            try {
+                await trainingStartOver(user.id);
+            } catch (e) {
+                NestiaWeb.logger.error('Error saveUserChoice', e);
+                res.status(500).send('Internal error');
+                // res.send({});
+                //
+                return;
+            }
+        }
+        if (deletion.mistake_data) {
+            //delete mistake data
+            try {
+                await clearUserMistakenTopics(user.id);
+            } catch (e) {
+                NestiaWeb.logger.error('Error saveUserChoice', e);
+                res.status(500).send('Internal error');
+                // res.send({});
+                //
+                return;
+            }
         }
         res.send({});
     } catch (e) {

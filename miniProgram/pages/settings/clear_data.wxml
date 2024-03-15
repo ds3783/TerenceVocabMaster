@@ -1,0 +1,30 @@
+<!--pages/settings/clear_data.wxml-->
+<view class="setting">
+    <view class="lexicon_list">
+        <scroll-view class="list_container" enhanced="true" show-scrollbar="false" scroll-x="false" type="list"
+                     scroll-y="true">
+            <checkbox-group class="checkbox-group" bind:change="onLexiconSelect">
+                <label class="checkbox-label">
+                    <checkbox value="TRAIN_DATA" checked="{{training_data_selected}}"></checkbox>
+                    学习进度
+                </label>
+                <label class="checkbox-label">
+                    <checkbox value="MISTAKE_DATA" checked="{{mistake_data_selected}}"></checkbox>
+                    错题集
+                </label>
+            </checkbox-group>
+        </scroll-view>
+
+    </view>
+    <view class="select_all">
+        <checkbox-group class="checkbox-group" bind:change="onSelectAll">
+            <label class="checkbox-label">
+                <checkbox value="{{true}}" checked="{{selectedAll}}"></checkbox>
+                全选
+            </label>
+        </checkbox-group>
+    </view>
+    <view class="module-item" bindtap="onSave">
+        <text class="module-name">保存</text>
+    </view>
+</view>

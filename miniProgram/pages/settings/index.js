@@ -68,5 +68,11 @@ Page({
         wx.navigateTo({
             url:'./lexicon_select',
         })
+    },
+
+    onClearData() {
+        wx.navigateTo({
+            url:'./clear_data',
+        })
     }
 })
