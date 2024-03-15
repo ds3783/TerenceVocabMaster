@@ -14,4 +14,7 @@
             <text class="module-name">{{item.name}}</text>
         </view>
     </view>
+    <view class="footer">
+        <navigator url="https://beian.miit.gov.cn/">豫ICP备 2024045077 号</navigator>
+    </view>
 </view>

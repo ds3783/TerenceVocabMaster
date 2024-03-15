@@ -78,3 +78,23 @@ page .head image {
     border-radius: 60rpx;
     box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.5);
 }
+
+
+.footer{
+    position: absolute;
+    width: 100%;
+    bottom: 32rpx;
+    left:0;
+    text-align: center;
+    color: #754926;
+    font-size:36rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
+
+.footer navigator{
+    margin: 0 auto;
+    text-align: center;
+    color: #966032;
+    font-size:42rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}
