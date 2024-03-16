@@ -195,7 +195,7 @@ async function trainTopics(userId, lexiconUpdate) {
         //delete topics that lexicons are  in lexiconUpdate.deleted  and not answered by user
         conn = await DataBase.borrow(dbName);
         for (const deletedLexicon of lexiconUpdate.deleted) {
-            await DataBase.doQuery(conn, SQLS.DELETE_NOT_ANSWERED_TOPICS_BY_LEXICON, [userId,]);
+            await DataBase.doQuery(conn, SQLS.DELETE_NOT_ANSWERED_TOPICS_BY_LEXICON, [userId,deletedLexicon]);
         }
         //check user's not answered topics
         remainingTopics = await DataBase.doQuery(conn, SQLS.GET_REMAINING_TOPICS, [userId]);
