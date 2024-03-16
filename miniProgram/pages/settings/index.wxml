@@ -7,5 +7,8 @@
         <view class="module-item"  bindtap="onClearData">
             <text class="module-name">清除数据</text>
         </view>
+        <view class="module-item"  bindtap="onShowDataSummary">
+            <text class="module-name">数据统计</text>
+        </view>
     </view>
 </scroll-view>

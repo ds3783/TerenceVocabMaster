@@ -1,6 +1,7 @@
 import NestiaWeb from "nestia-web";
 import DataBase from "../../db/index.mjs";
 import {v4 as uuid} from "uuid";
+import {addUserMistakeCount, clearUserMistakeCount} from "./index.mjs";
 
 const SQLS = {
     INSERT_MISTAKE_TOPIC: 'INSERT INTO train_topic_mistakes (id, word, lexicon_code, user_id, options, user_choice, correct_choice, sequence, answer_time, mistake_times, correct_times) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -186,6 +187,7 @@ export async function saveBoosterChoice(userId, topicId, choice, shuffle) {
         if ('' + choice !== '' + correctIndex) {
             topic.mistake_times++;
             topic.correct_times = 0;
+            await addUserMistakeCount(userId, topic.word);
         } else {
             topic.correct_times++;
         }
@@ -212,6 +214,7 @@ export async function clearUserMistakenTopics(userId) {
     try {
         conn = await DataBase.borrow(dbName);
         await DataBase.doQuery(conn, SQLS.DELETE_USER_MISTAKE_TOPIC, [userId]);
+
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {
@@ -219,4 +222,5 @@ export async function clearUserMistakenTopics(userId) {
             DataBase.release(conn);
         }
     }
+    await clearUserMistakeCount(userId);
 }

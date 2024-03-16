@@ -220,6 +220,7 @@ router.get('/getMySummary', async function (req, res, ignoredNext) {
         res.status(400).send('Invalid parameters');
         return;
     }
+    let full = req.query.full === 'true';
     try {
         let checked = await checkUserLogin(openId, envString, token);
         if (!checked.result) {
@@ -227,7 +228,7 @@ router.get('/getMySummary', async function (req, res, ignoredNext) {
             return;
         }
         let user = checked.user;
-        let summary = await getUserTrainSummary(user.id);
+        let summary = await getUserTrainSummary(user.id, full);
 
         res.send(summary || {});
     } catch (e) {

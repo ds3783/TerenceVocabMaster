@@ -26,7 +26,12 @@ const SQLS = {
     GET_COUNT_CORRECT_TOPIC: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL AND `user_choice` = `correct_choice`',
     DELETE_USER_TOPIC: 'DELETE FROM train_topic WHERE `user_id`=?',
     GET_TOPIC_ID: 'SELECT * FROM train_topic WHERE `id`= ? AND `user_id`=?',
-
+    GET_COUNT_TOTAL_WORDS: 'SELECT COUNT(*) AS CNT FROM vocabulary WHERE `lexicon` in (SELECT `lexicon_code` FROM user_lexicon WHERE `user_id`=?)',
+    GET_MOST_DIFFICULT_WORD: 'SELECT word FROM user_mistakes WHERE `user_id`=?  ORDER BY count DESC LIMIT 1',
+    GET_USER_MISTAKE: 'SELECT * FROM user_mistakes WHERE `user_id`=? AND `word`=?',
+    UPDATE_USER_MISTAKE_COUNT: 'UPDATE user_mistakes SET `count`=? WHERE `id`=?',
+    INSERT_USER_MISTAKE: 'INSERT INTO user_mistakes(`id`,`user_id`,`word`,`count`) VALUES(?,?,?,?)',
+    DELETE_USER_MISTAKE: 'DELETE FROM user_mistakes WHERE `user_id`=?',
 };
 
 const MIN_BUFFED_TOPICS = 100;
@@ -195,7 +200,7 @@ async function trainTopics(userId, lexiconUpdate) {
         //delete topics that lexicons are  in lexiconUpdate.deleted  and not answered by user
         conn = await DataBase.borrow(dbName);
         for (const deletedLexicon of lexiconUpdate.deleted) {
-            await DataBase.doQuery(conn, SQLS.DELETE_NOT_ANSWERED_TOPICS_BY_LEXICON, [userId,deletedLexicon]);
+            await DataBase.doQuery(conn, SQLS.DELETE_NOT_ANSWERED_TOPICS_BY_LEXICON, [userId, deletedLexicon]);
         }
         //check user's not answered topics
         remainingTopics = await DataBase.doQuery(conn, SQLS.GET_REMAINING_TOPICS, [userId]);
@@ -363,8 +368,8 @@ export async function saveUserChoice(userId, topicId, choice) {
     let topics;
     try {
         conn = await DataBase.borrow(dbName);
-         topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, userId]);
-        
+        topics = await DataBase.doQuery(conn, SQLS.GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER, [topicId, userId]);
+
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {
@@ -390,12 +395,52 @@ export async function saveUserChoice(userId, topicId, choice) {
     }
     if (topic.user_choice !== topic.correct_choice) {
         await insertMistake(topic);
+        await addUserMistakeCount(userId, topic.word);
     }
     return topic;
 }
 
+export async function addUserMistakeCount(userId, word) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        let mistake = await DataBase.doQuery(conn, SQLS.GET_USER_MISTAKE, [userId, word]);
+        if (mistake.length > 0) {
+            mistake = mistake[0];
+            await DataBase.doQuery(conn, SQLS.UPDATE_USER_MISTAKE_COUNT, [mistake.count + 1, mistake.id]);
+        } else {
+            await DataBase.doQuery(conn, SQLS.INSERT_USER_MISTAKE, [uuid(), userId, word, 1]);
+        }
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
 
-export async function getUserTrainSummary(userId) {
+}
+
+export async function clearUserMistakeCount(userId) {
+    let dbName = NestiaWeb.manifest.get('defaultDatabase');
+    let conn = null;
+    try {
+        conn = await DataBase.borrow(dbName);
+        await DataBase.doQuery(conn, SQLS.DELETE_USER_MISTAKE, [userId]);
+
+    } catch (e) {
+        NestiaWeb.logger.error('Error do query', e);
+    } finally {
+        if (conn) {
+            DataBase.release(conn);
+        }
+    }
+
+}
+
+
+export async function getUserTrainSummary(userId, full = false) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
     let conn = null;
     try {
@@ -406,10 +451,22 @@ export async function getUserTrainSummary(userId) {
         correct = correct[0]['CNT'];
         let result = {
             words_correct: correct,
-            words_total: answered,
+            words_answered: answered,
         };
         if (answered > 0) {
             result.correct_rate = (correct / answered * 100).toFixed(2);
+        }
+        if (full) {
+            let total_words = await DataBase.doQuery(conn, SQLS.GET_COUNT_TOTAL_WORDS, [userId]);
+            total_words = total_words[0]['CNT'];
+            result.words_total = total_words;
+            if (total_words > 0) {
+                result.complete_rate = (answered / total_words * 100).toFixed(2);
+            }
+            let mostDifficult = await DataBase.doQuery(conn, SQLS.GET_MOST_DIFFICULT_WORD, [userId]);
+            if (mostDifficult.length > 0) {
+                result.most_difficult = mostDifficult[0]['word'];
+            }
         }
         return result;
     } catch (e) {

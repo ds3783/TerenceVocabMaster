@@ -58,47 +58,8 @@ App({
         global.eventEmitter.on('userInfoUpdated', (userInfo) => {
             wx.setStorageSync('user', userInfo);
         });
-        if (cachedUser) {
-            if (!cachedUser.open_id || !cachedUser.token) {
-                console.log('Invalid user info');
-                console.log('Clear user info');
-                cachedUser = null;
-                wx.removeStorageSync('user');
-            } else {
-                wx.request({
-                    url: API('checkLogin'),
-                    data: {
-                        open_id: cachedUser.open_id,
-                        token: cachedUser.token,
-                        env: envString,
-                    },
-                    method: 'POST',
-                    success: res => {
-                        if (res.statusCode !== 200 && res.statusCode !== 401) {
-                            onNetworkFailure();
-                            return;
-                        }
-                        if (res.statusCode === 401 || !res.data.result) {
-                            console.log('Invalid user info', res);
-                            console.log('Clear user info');
-                            cachedUser = null;
-                            wx.removeStorageSync('user');
-                            return;
-                        }
-                        console.log('login success:', res);
-                        this.globalData.userInfo = cachedUser;
-                        global.eventEmitter.emit('userInfoUpdated', cachedUser);
-                    },
-                    fail: res => {
-                        console.log('check login fail:', res);
-                        console.log('Clear user info');
-                        cachedUser = null;
-                        wx.removeStorageSync('user');
-                    }
-                });
-            }
-        }
-        if (!cachedUser) {
+
+        function login() {
             console.log('Begin login')
             // 小程序启动时触发
             wx.login({
@@ -135,7 +96,52 @@ App({
                     onNetworkFailure();
                 }
             });
+        }
 
+        if (cachedUser) {
+            if (!cachedUser.open_id || !cachedUser.token) {
+                console.log('Invalid user info');
+                console.log('Clear user info');
+                cachedUser = null;
+                wx.removeStorageSync('user');
+            } else {
+                wx.request({
+                    url: API('checkLogin'),
+                    data: {
+                        open_id: cachedUser.open_id,
+                        token: cachedUser.token,
+                        env: envString,
+                    },
+                    method: 'POST',
+                    success: res => {
+                        if (res.statusCode !== 200 && res.statusCode !== 401) {
+                            onNetworkFailure();
+                            return;
+                        }
+                        if (res.statusCode === 401 || !res.data.result) {
+                            console.log('Invalid user info', res);
+                            console.log('Clear user info');
+                            cachedUser = null;
+                            wx.removeStorageSync('user');
+                            login();
+                            return;
+                        }
+                        console.log('login success:', res);
+                        this.globalData.userInfo = cachedUser;
+                        global.eventEmitter.emit('userInfoUpdated', cachedUser);
+                    },
+                    fail: res => {
+                        console.log('check login fail:', res);
+                        console.log('Clear user info');
+                        cachedUser = null;
+                        wx.removeStorageSync('user');
+                    }
+                });
+            }
+        }
+        if (!cachedUser) {
+
+            login();
         }
     },
 })

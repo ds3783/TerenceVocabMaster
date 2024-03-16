@@ -1,4 +1,4 @@
-// pages/training/summary.js
+// pages/settings/data_summary.js
 const API = require("../../utils/apis");
 Page({
 
@@ -6,9 +6,7 @@ Page({
      * 页面的初始数据
      */
     data: {
-        words_correct: 0,
-        words_total: 0,
-        correct_rate: 0,
+        summary: null,
     },
 
     /**
@@ -31,6 +29,7 @@ Page({
             open_id: userInfo.open_id,
             token: userInfo.token,
             env: envString,
+            full: true,
         };
 
         wx.request({
@@ -58,9 +57,7 @@ Page({
                 }
                 let result = res.data;
                 this.setData({
-                    words_correct: result.words_correct,
-                    words_answered: result.words_answered,
-                    correct_rate: result.correct_rate,
+                    summary: result,
                 });
                 wx.hideLoading();
             },
@@ -126,66 +123,9 @@ Page({
 
     },
 
-    startOver() {
-        wx.showModal({
-            title: '重新开始',
-            content: '将会清空当前记录，确定重新开始吗？',
-            success(res) {
-                if (res.confirm) {
-                    wx.showLoading({mask: true, title: '加载中...'});
-                    const appInstance = getApp();
-
-                    let userInfo = appInstance.globalData.userInfo;
-                    const envString = wx.getAccountInfoSync().miniProgram.envVersion;
-                    let reqData = {
-                        open_id: userInfo.open_id,
-                        token: userInfo.token,
-                        env: envString,
-                    };
-
-                    wx.request({
-                        url: API('trainingStartOver'),
-                        data: reqData,
-                        method: 'POST',
-                        success: res => {
-                            if (res.statusCode !== 200) {
-                                console.log('trainingStartOver load fail:', res);
-                                wx.hideLoading();
-                                wx.showModal({
-                                    title: '警告',
-                                    content: '网络错误，请稍后再试',
-                                    showCancel: false, // 不显示取消按钮
-                                    confirmText: '确定', // 确定按钮的文字，默认为"确定"
-                                    success: function (res) {
-                                       
-                                    }
-                                });
-                                return;
-                            }
-                           
-                            wx.hideLoading();
-                            wx.navigateBack({
-                                delta: 1
-                            });
-                        },
-                        fail: res => {
-                            console.log('trainingStartOver load  fail:', res);
-                            wx.showModal({
-                                title: '警告',
-                                content: '网络错误，请稍后再试',
-                                showCancel: false, // 不显示取消按钮
-                                confirmText: '确定', // 确定按钮的文字，默认为"确定"
-                                success: function (res) {
-                                    if (res.confirm) {
-                                     
-                                    }
-                                }
-                            });
-                            wx.hideLoading();
-                        }
-                    });
-                } 
-            }
+    onReturn() {
+        wx.navigateBack({
+            delta: 1
         });
     }
 })

@@ -74,5 +74,10 @@ Page({
         wx.navigateTo({
             url:'./clear_data',
         })
+    }    ,
+    onShowDataSummary() {
+        wx.navigateTo({
+            url:'./data_summary',
+        });
     }
 })
