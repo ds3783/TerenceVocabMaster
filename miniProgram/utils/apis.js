@@ -90,6 +90,11 @@ const APIS = [
         type: 'api',
         path: '${api}/miniprog_api/${api_version}/training/deleteMyData',
     },
+    {
+        name: 'getDictionaryDetail',
+        type: 'api',
+        path: '${api}/miniprog_api/${api_version}/dictionary/getDictionaryDetail',
+    },
     
 ];
 

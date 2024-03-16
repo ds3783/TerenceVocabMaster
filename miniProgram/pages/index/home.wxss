@@ -9,6 +9,7 @@ page {
 }
 
 page .head {
+    margin-top:90rpx;
     height: 180rpx;
     text-align: left;
     padding-top: 20rpx;
@@ -60,7 +61,9 @@ page .head image {
 }
 
 .user-login{
-    margin-top: 40rpx;
+    position: absolute;
+    width: 100%;
+    top: 40rpx;
    display: flex;
     flex-direction: row;
     justify-content: flex-end;

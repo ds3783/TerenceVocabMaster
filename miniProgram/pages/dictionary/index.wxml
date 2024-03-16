@@ -1,0 +1,18 @@
+<!--pages/dictionary/index.wxml-->
+<view class="page">
+    <view class="input_area">
+            <textarea
+                    value="{{query_text}}"
+                    placeholder="请输入待查询单词..."
+                    auto-height="{{false}}"
+                    maxlength="140"
+                    bindinput="onInput"
+                    class="textarea">
+            </textarea>
+    </view>
+    <view class="operation">
+        <view class="button" bind:tap="doQuery">
+            <text>查 询</text>
+        </view>
+    </view>
+</view>

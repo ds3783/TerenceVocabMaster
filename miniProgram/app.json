@@ -11,7 +11,9 @@
     "pages/training/boosting_exercise",
     "pages/training/boosting_complete",
     "pages/settings/clear_data",
-    "pages/settings/data_summary"
+    "pages/settings/data_summary",
+    "pages/dictionary/index",
+    "pages/dictionary/result"
   ],
   "window": {
     "navigationBarTextStyle": "black",

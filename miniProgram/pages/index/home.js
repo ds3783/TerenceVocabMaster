@@ -38,6 +38,9 @@ Page({
             name: "强化训练", url: '/pages/training/boosting_exercise',
         });
         moduleList.push({
+            name: "查辞典", url: '/pages/dictionary/index',
+        });
+        moduleList.push({
             name: "设置", url: '/pages/settings/index',
         });
         this.setData({'moduleList': moduleList});

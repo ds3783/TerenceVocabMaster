@@ -1,0 +1,87 @@
+/* pages/dictionary/result.wxss */
+
+.page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/background2.jpg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.output_area {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 20rpx 32rpx;
+    width: calc(100% - 128rpx);
+    padding: 32rpx;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 32rpx;
+    min-height: 512rpx;
+    
+    height: calc(100vh - 375rpx);
+    color: #754926;
+    font-size: 48rpx;
+    line-height: 150%;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";   
+}
+
+.output_area .word{
+    font-size: 80rpx;
+    font-weight: bold;
+    margin-bottom: 20rpx;
+}
+.output_area text{
+    display: block;
+}
+
+
+.output_area .title{
+    font-size: 56rpx;
+    font-weight: bold;
+}
+
+.output_area .content{
+    margin-left:32rpx;
+}
+
+.output_area .explanation{
+    margin-top: 20rpx;
+}
+
+.output_area .example{
+    margin-top: 20rpx;
+}
+
+
+
+.operation{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.operation .button{
+    width: 600rpx;
+    height: 120rpx;
+    margin-top: 40rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 120rpx;
+    background: url("https://ec7-fun.oss-rg-china-mainland.aliyuncs.com/vocab_master/mp/button-wide.png") no-repeat center center;
+    background-size: 100% 100%;
+    box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.2);
+}
+
+.operation .button text{
+    width: 600rpx;
+    text-align: center;
+    color: #754926;
+    font-size:80rpx;
+    line-height: 120rpx;
+    font-family: "Handwriting", "Heiti SC", "sans-serif";
+}

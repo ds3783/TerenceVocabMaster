@@ -1,0 +1,27 @@
+<!--pages/dictionary/result.wxml-->
+<view class="page">
+    <scroll-view class="output_area" scroll-y>
+        <view class="word">
+            <text >{{query_text}}</text>
+        </view>
+        <view class="pronunciation">
+            <text >{{result.pronunciation}}</text>
+        </view>
+        <view class="translation">
+            <text wx:for="{{result.translation}}" data-choice="{{index}}" wx:key="this" >{{item}}</text>
+        </view>
+        <view class="explanation">
+            <text class="title">解释：</text>
+            <text class="content" wx:for="{{result.explanation}}" data-choice="{{index}}" wx:key="this" >{{item}}</text>
+        </view>
+        <view class="example">
+            <text class="title">例句：</text>
+            <text class="content" wx:for="{{result.example}}" data-choice="{{index}}" wx:key="this" >{{item}}</text>
+        </view>
+    </scroll-view>
+    <view class="operation">
+        <view class="button" bind:tap="goBack">
+            <text>返  回</text>
+        </view>
+    </view>
+</view>

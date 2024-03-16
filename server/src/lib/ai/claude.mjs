@@ -14,7 +14,7 @@ const SQLS = {
 
 const CACHE_TTL = 365 * 60 * 60 * 24 * 1000;
 
-async function getCache(category, key) {
+export async function getCache(category, key) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
     let conn = null;
     let now = Date.now();
@@ -75,6 +75,7 @@ export async function deleteCache(category, key) {
 
 export async function request(prompt, options) {
     let cacheData = null;
+    options = options || {};
     if (options.category && options.key) {
         cacheData = await getCache(options.category, options.key);
     }
@@ -103,6 +104,7 @@ export async function request(prompt, options) {
         },
         reqContentType: 'json',
         resContentType: 'json',
+        timeout:60000,
         data: {
             "model": options.model || "claude-3-opus-20240229",
             "max_tokens": 1024,
