@@ -63,7 +63,7 @@ Page({
                     wx.hideLoading();
                     wx.showModal({
                         title: '警告',
-                        content: '网络错误，请稍后再试',
+                        content: '未找到相关词条： '+this.data.query_text,
                         showCancel: false, // 不显示取消按钮
                         confirmText: '确定', // 确定按钮的文字，默认为"确定"
                         success: function (res) {
@@ -78,8 +78,18 @@ Page({
                 }
                 let result = res.data;
                 if (result === null) {
-                    this.setData({
-                        inValid: result,
+                    wx.showModal({
+                        title: '警告',
+                        content: '网络错误，请稍后再试',
+                        showCancel: false, // 不显示取消按钮
+                        confirmText: '确定', // 确定按钮的文字，默认为"确定"
+                        success: function (res) {
+                            if (res.confirm) {
+                                wx.navigateBack({
+                                    delta: 1
+                                });
+                            }
+                        }
                     });
                 } else {
                     result.translation = (result.translation || '').split('\n');

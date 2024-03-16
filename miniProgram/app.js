@@ -56,6 +56,7 @@ App({
         const envString = wx.getAccountInfoSync().miniProgram.envVersion;
         console.log('cachedUser', cachedUser);
         global.eventEmitter.on('userInfoUpdated', (userInfo) => {
+            this.globalData.userInfo = userInfo;
             wx.setStorageSync('user', userInfo);
         });
 
@@ -126,7 +127,7 @@ App({
                             login();
                             return;
                         }
-                        console.log('login success:', res);
+                        console.log('login success by old cache:', res);
                         this.globalData.userInfo = cachedUser;
                         global.eventEmitter.emit('userInfoUpdated', cachedUser);
                     },
@@ -135,6 +136,7 @@ App({
                         console.log('Clear user info');
                         cachedUser = null;
                         wx.removeStorageSync('user');
+                        login();
                     }
                 });
             }

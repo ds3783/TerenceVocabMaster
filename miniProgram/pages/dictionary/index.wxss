@@ -23,7 +23,7 @@
 }
 
 .input_area textarea {
-    height: calc(100% - 64rpx);
+    height: calc(100vh - 512rpx);
     color: #754926;
     font-size: 48rpx;
     line-height: 150%;
