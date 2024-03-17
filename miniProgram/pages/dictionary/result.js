@@ -79,8 +79,8 @@ Page({
                 let result = res.data;
                 if (result === null) {
                     wx.showModal({
-                        title: '警告',
-                        content: '网络错误，请稍后再试',
+                        title: '错误',
+                        content: '未找到相关词条： '+this.data.query_text +' 请检查输入',
                         showCancel: false, // 不显示取消按钮
                         confirmText: '确定', // 确定按钮的文字，默认为"确定"
                         success: function (res) {
