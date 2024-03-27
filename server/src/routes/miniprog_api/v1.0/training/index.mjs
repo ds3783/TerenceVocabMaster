@@ -2,7 +2,8 @@ import express from 'express';
 import NestiaWeb from "nestia-web";
 import {checkUserLogin} from "../../../../lib/service/user/index.mjs";
 import {
-    getUserNextTopic, getUserPreviousTopic, getUserTrainSummary, saveUserChoice,
+    getUserLexiconList,
+    getUserNextTopic, getUserPreviousTopic, getUserTrainSummary, isUserGeneratingTopics, saveUserChoice,
     trainingStartOver
 } from "../../../../lib/service/training/index.mjs";
 
@@ -40,8 +41,12 @@ router.get('/loadNextTopic', async function (req, res, ignoredNext) {
                 hasNext: topic.user_choice !== null,
             })
         } else {
-            //TODO get summary
+            let lexicons = await getUserLexiconList(user.id);
+            let selectedLexicons = lexicons.filter(l => l.selected);
+            let generatingTopics= await isUserGeneratingTopics(user.id);
             res.send({
+                generatingTopics: generatingTopics,
+                selectedLexicons: selectedLexicons.length,
                 noMoreTopics: true
             });
         }

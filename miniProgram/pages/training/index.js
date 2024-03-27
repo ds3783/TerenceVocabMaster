@@ -125,7 +125,27 @@ Page({
                     return;
                 }
                 let result = res.data;
-                if (result.noMoreTopics){
+                if (result.generatingTopics) {
+                    wx.showModal({
+                        title: '警告',
+                        content: '正在生成试题，请稍后再试',
+                        showCancel: false, // 不显示取消按钮
+                        confirmText: '确定', // 确定按钮的文字，默认为"确定"
+                        success: function (res) {
+                            if (res.confirm) {
+                                if (firstLoad) {
+                                    wx.navigateBack({
+                                        delta: 1
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }else if (result.selectedLexicons===0){
+                    wx.redirectTo({
+                        url: '/pages/settings/lexicon_select',
+                    });
+                }else if (result.noMoreTopics){
                     wx.redirectTo({
                         url: '/pages/training/summary',
                     });

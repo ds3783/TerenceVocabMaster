@@ -18,6 +18,7 @@ const SQLS = {
     GET_NON_OPTIONS_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL AND `options` IS NULL ORDER BY `sequence` LIMIT 10',
     GET_NEXT_TRAINED_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `sequence`>? AND `user_choice` IS NOT NULL AND `options` IS NOT NULL ORDER BY `sequence` ASC LIMIT 1',
     GET_NEXT_TRAINING_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL AND `options` IS NOT NULL ORDER BY `sequence` ASC LIMIT 1',
+    GET_FREE_TRAINING_TOPICS_CNT: 'SELECT COUNT(*) AS CNT FROM train_topic WHERE `user_id`=? AND `user_choice` IS NULL AND `options` IS NOT NULL ',
     GET_PREV_TRAINING_TOPICS: 'SELECT * FROM train_topic WHERE `user_id`=? AND `user_choice` IS NOT NULL AND `options` IS NOT NULL AND `sequence` < ? ORDER BY `sequence` DESC LIMIT 1',
     UPDATE_TOPIC_OPTIONS: 'UPDATE train_topic SET `options`=?,`correct_choice`=? WHERE `id`=?',
     GET_NOT_ANSWERED_TOPIC_BY_ID_AND_USER: 'SELECT * FROM train_topic WHERE `id`=? AND `user_id`=? AND `user_choice` IS NULL',
@@ -38,6 +39,56 @@ const MIN_BUFFED_TOPICS = 100;
 
 const TOPIC_PROMPT = "You need to give a single-choice answers to the following phrase and give 4 Chinese answers, and at least 1 answer has similar meanings, but only one answer is correct.Reply in format 'Answers: A. B. C. D. Correct: [ABCD]', phase:'${word}'";
 const CACHE_CATEGORY = 'TOPIC_OPTIONS_GENERATION';
+
+let USER_TOPIC_GENERATING = {};
+
+function tryStartGeneration(userId) {
+    let userState = USER_TOPIC_GENERATING[userId];
+    if (userState && userState.isGenerating && Date.now() - userState.generationTime < 1000 * 60 * 5) {
+        return false;
+    } else if (!userState) {
+        userState = {isGenerating: true, generationTime: Date.now(), isFilling: false, fillingTime: 0};
+        USER_TOPIC_GENERATING[userId] = userState;
+        return true;
+    } else {
+        userState.isGenerating = true;
+        userState.generationTime = Date.now();
+        return true;
+    }
+
+}
+
+function tryStartFullfill(userId) {
+    let userState = USER_TOPIC_GENERATING[userId];
+    if (userState && userState.isFilling && Date.now() - userState.fillingTime < 1000 * 60 * 30) {
+        return false;
+    } else if (!userState) {
+        userState = {isGenerating: false, generationTime: 0, isFilling: true, fillingTime: Date.now()};
+        USER_TOPIC_GENERATING[userId] = userState;
+        return true;
+    } else {
+        userState.isFilling = true;
+        userState.fillingTime = Date.now();
+        return true;
+    }
+
+}
+
+function endGeneration(userId) {
+    let userState = USER_TOPIC_GENERATING[userId];
+    if (userState) {
+        userState.isGenerating = false;
+        userState.generationTime = 0;
+    }
+}
+
+function endFulfill(userId) {
+    let userState = USER_TOPIC_GENERATING[userId];
+    if (userState) {
+        userState.isFilling = false;
+        userState.fillingTime = 0;
+    }
+}
 
 async function getUserSelection(user_id) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
@@ -217,16 +268,25 @@ async function trainTopics(userId, lexiconUpdate) {
     let toGenerate = MIN_BUFFED_TOPICS - remainingTopics;
     if (toGenerate > 0) {
         NestiaWeb.logger.info('Generate topics for user:', userId, 'toGenerate:', toGenerate);
-        generateTopics(userId, toGenerate).then(() => {
-            NestiaWeb.logger.info(`Finished generate [${toGenerate}] topics for user:`, userId);
+        if (tryStartGeneration(userId)) {
+            generateTopics(userId, toGenerate).then(() => {
+                NestiaWeb.logger.info(`Finished generate [${toGenerate}] topics for user:`, userId);
+                endGeneration(userId);
+                if (tryStartFullfill(userId)) {
+                    fullfillTopics(userId).then(() => {
+                        NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+                        endFulfill(userId);
+                    });
+                }
+            });
+        }
+    } else {
+        if (tryStartFullfill(userId)) {
             fullfillTopics(userId).then(() => {
                 NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+                endFulfill(userId);
             });
-        });
-    } else {
-        fullfillTopics(userId).then(() => {
-            NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
-        });
+        }
     }
 }
 
@@ -312,7 +372,7 @@ export async function setUserLexiconList(userId, lexiconList) {
 
 export async function getUserNextTopic(userId, sequence = null) {
     let dbName = NestiaWeb.manifest.get('defaultDatabase');
-    let conn = null;
+    let conn = null, result, freeTopics = 0;
     try {
         conn = await DataBase.borrow(dbName);
         let rs;
@@ -328,9 +388,11 @@ export async function getUserNextTopic(userId, sequence = null) {
         if (rs.length === 0) {
             return null;
         }
-        let result = rs[0];
+        result = rs[0];
         result.options = JSON.parse(result.options);
-        return result;
+
+        rs = await DataBase.doQuery(conn, SQLS.GET_FREE_TRAINING_TOPICS_CNT, [userId]);
+        freeTopics = rs[0]['CNT'];
     } catch (e) {
         NestiaWeb.logger.error('Error do query', e);
     } finally {
@@ -338,6 +400,22 @@ export async function getUserNextTopic(userId, sequence = null) {
             DataBase.release(conn);
         }
     }
+    if (freeTopics < Math.max(30, MIN_BUFFED_TOPICS / 3)) {
+        NestiaWeb.logger.info('User has only ' + freeTopics + ' free topics, generate more topics for user:', userId);
+        if (tryStartGeneration(userId)) {
+            generateTopics(userId, MIN_BUFFED_TOPICS).then(() => {
+                NestiaWeb.logger.info(`Finished generate [${MIN_BUFFED_TOPICS}] topics for user:`, userId);
+                endGeneration(userId);
+                if (tryStartFullfill(userId)) {
+                    fullfillTopics(userId).then(() => {
+                        NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+                        endFulfill(userId);
+                    });
+                }
+            });
+        }
+    }
+    return result;
 }
 
 export async function getUserPreviousTopic(userId, sequence) {
@@ -493,11 +571,22 @@ export async function trainingStartOver(userId) {
         }
     }
     NestiaWeb.logger.info('User start over:', userId);
-    generateTopics(userId, MIN_BUFFED_TOPICS).then(() => {
-        NestiaWeb.logger.info(`Finished generate [${MIN_BUFFED_TOPICS}] topics for user:`, userId);
-        fullfillTopics(userId).then(() => {
-            NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+    if (tryStartGeneration(userId)) {
+        generateTopics(userId, MIN_BUFFED_TOPICS).then(() => {
+            NestiaWeb.logger.info(`Finished generate [${MIN_BUFFED_TOPICS}] topics for user:`, userId);
+            endGeneration(userId);
+            if (tryStartFullfill(userId)) {
+                fullfillTopics(userId).then(() => {
+                    NestiaWeb.logger.info(`Finished fulfil topics for user:`, userId);
+                    endFulfill(userId);
+                });
+            }
         });
-    });
+    }
 }
 
+
+export async function isUserGeneratingTopics(userId) {
+    let userState = USER_TOPIC_GENERATING[userId];
+    return (userState && userState.isGenerating) || (userState && userState.isFilling);
+}
