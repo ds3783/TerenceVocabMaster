@@ -51,7 +51,7 @@ App({
             });
         }
 
-        // 展示本地存储能力
+        // 加载缓存
         let cachedUser = wx.getStorageSync('user') || [];
         const envString = wx.getAccountInfoSync().miniProgram.envVersion;
         console.log('cachedUser', cachedUser);
@@ -142,7 +142,6 @@ App({
             }
         }
         if (!cachedUser) {
-
             login();
         }
     },

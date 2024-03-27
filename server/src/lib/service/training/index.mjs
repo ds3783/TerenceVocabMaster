@@ -303,7 +303,7 @@ export async function setUserLexiconList(userId, lexiconList) {
         added: added,
         deleted: deleted
     };
-    // trigger test topics generation
+    // update topics and trigger training topics generation
     await trainTopics(userId, lexiconUpdate);
 
     return lexiconUpdate;

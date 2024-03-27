@@ -185,6 +185,7 @@ export async function saveBoosterChoice(userId, topicId, choice, shuffle) {
             topic.correct_times = 0;
         }
         if ('' + choice !== '' + correctIndex) {
+            //reset correct_times to 0 if user made a mistake
             topic.mistake_times++;
             topic.correct_times = 0;
             await addUserMistakeCount(userId, topic.word);
