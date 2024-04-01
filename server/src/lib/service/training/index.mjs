@@ -313,26 +313,12 @@ export async function setUserLexiconList(userId, lexiconList) {
     let deleted = [];
     let added = [];
     for (let lexicon of userSelection) {
-        let found = false;
-        for (let lexiconInList of lexiconList) {
-            if (lexiconInList === lexicon) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (!lexiconList.find((item) => item === lexicon)) {
             deleted.push(lexicon);
         }
     }
     for (let lexicon of lexiconList) {
-        let found = false;
-        for (let lexiconInDb of userSelection) {
-            if (lexiconInDb === lexicon) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (!userSelection.find((item) => item === lexicon)) {
             added.push(lexicon);
         }
     }
